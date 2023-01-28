@@ -1,0 +1,12 @@
+Correct answers: 1 | False answers: 2 | Result: 33.333333333333336 % | Average time: 1.417 seconds
+Correct answers: 1 | False answers: 1 | Result: 50.0 % | Average time: 1.4685 seconds
+Correct answers: 2 | False answers: 0 | Result: 100.0 % | Average time: 2.1155 seconds
+Correct answers: 1 | False answers: 2 | Result: 33.0 % | Average time: 2.653 seconds
+Correct answers: 1 | False answers: 2 | Result: 33.0 % | Average time: 1.79 seconds
+Correct answers: 1 | False answers: 2 | Result: 33.3 % | Average time: 1.326 seconds
+Correct answers: 1 | False answers: 2 | Result: 33.3 % | Average time: 1.1833333333333333 seconds
+Correct answers: 1 | False answers: 4 | Result: 20.0 % | Average time: 1.7768 seconds
+Correct answers: 2 | False answers: 2 | Result: 50.0 % | Average time: 1.6575 seconds
+Correct answers: 1 | False answers: 1 | Result: 50.0 % | Average time: 1.2535 seconds
+Correct answers: 1 | False answers: 2 | Result: 33.333333333333336 % | Average time: 1.215 seconds
+Correct answers: 1 | False answers: 1 | Result: 50.0 % | Average time: 5.3785 seconds
