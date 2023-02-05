@@ -10,3 +10,5 @@ Correct answers: 2 | False answers: 2 | Result: 50.0 % | Average time: 1.6575 se
 Correct answers: 1 | False answers: 1 | Result: 50.0 % | Average time: 1.2535 seconds
 Correct answers: 1 | False answers: 2 | Result: 33.333333333333336 % | Average time: 1.215 seconds
 Correct answers: 1 | False answers: 1 | Result: 50.0 % | Average time: 5.3785 seconds
+Correct answers: 2 | False answers: 1 | Result: 66.66666666666667 % | Average time: 2.499 seconds
+Correct answers: 2 | False answers: 2 | Result: 50.0 % | Average time: 5.2335 seconds

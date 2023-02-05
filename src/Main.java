@@ -37,7 +37,7 @@ public class Main {
         results(elapsedTime); //we show the results
     }
 
-    public static void randomizer(int i) //randy method is used for creating random numbers and passing them to calc method
+    public static void randomizer(int i) //randomizer method is used for creating random numbers and passing them to calc method
     {
         Random randomNumber1 = new Random(); //will be used for the values asked in the quiz
         Random randomNumber2 = new Random(); //will be used for operations (+,-,*)
@@ -100,7 +100,7 @@ public class Main {
 
     public static void saveResult(String results)
     {
-        Path path = Paths.get("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\results.txt");
+        Path path = Paths.get("C:\\Users\\Administrator\\IdeaProjects\\javaMathQuiz\\src\\results.txt");
         byte[] arr = results.getBytes();
 
         try {
@@ -109,7 +109,7 @@ public class Main {
         catch (IOException ex) {
             System.out.print("Invalid Path");
         }
-        printGraph();
+        //printGraph();
     }
 
     public static void printGraph()
