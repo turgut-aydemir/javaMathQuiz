@@ -109,16 +109,5 @@ public class Main {
         catch (IOException ex) {
             System.out.print("Invalid Path");
         }
-        //printGraph();
-    }
-
-    public static void printGraph()
-    {
-        JFrame frame =new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new Graph());
-        frame.setSize(400,400);
-        frame.setLocation(200,200);
-        frame.setVisible(true);
     }
 }
