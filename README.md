@@ -5,4 +5,4 @@
 <br>*add question adds the users question to the question pool
 <br>*edit question enables user to change questions in the pool
 <br>*start question asks the user name and number of questions he/she wants in the quiz round
-<br>*enjoy pls :)
+<br>*feel free to enjoy :)
