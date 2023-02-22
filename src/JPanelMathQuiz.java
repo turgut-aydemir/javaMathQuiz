@@ -5,14 +5,10 @@ import javax.swing.*;
 public class JPanelMathQuiz extends JFrame implements ActionListener { // Main class extending JFrame class
     static JFrame f; // JFrame
     static JButton b1, b2, b3, b4; // JButton
-    static JLabel l; // Label to display text
-
 
     JPanelMathQuiz(String s)
     {
         f = new JFrame("Math Quiz"); // Creating a new frame to store text field and button
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //l = new JLabel("MathQuiz"); // Creating a label to display text
 
         b1 = new JButton("Add Question"); // Creating a new buttons
         b1.addActionListener(this);
@@ -25,16 +21,14 @@ public class JPanelMathQuiz extends JFrame implements ActionListener { // Main c
 
         JPanel panelMainMenu = new JPanel(); // Creating a panel to add buttons and textfield and a layout
 
-
         //panelMainMenu.setLayout(new BoxLayout(panelMainMenu, BoxLayout.Y_AXIS)); // Setting box layout
 
         panelMainMenu.add(b1); // Adding buttons and textfield to panel
         panelMainMenu.add(b2);
         panelMainMenu.add(b3);
         panelMainMenu.add(b4);
-        //p.add(l);
 
-        panelMainMenu.setBackground(Color.yellow); // Setting background of panel
+        panelMainMenu.setBackground(Color.green); // Setting background of panel
         panelMainMenu.setBorder(BorderFactory.createEmptyBorder(40,40,40,40));
         panelMainMenu.setLayout(new GridLayout(2,2));
 
