@@ -54,7 +54,30 @@ public class JPanelMathQuiz extends JFrame implements ActionListener { // Main c
         }
         if(e.getSource()==b3)
             {
-                b3.setText("how many questions do you want AND what is your name?");
+                JPanel panelStartQuiz = new JPanel();
+                JLabel usernameLabel = new JLabel("Name");
+                JLabel numberOFQuestionsLabel = new JLabel("# of Questions");
+                JTextField usernameTextField = new JTextField("0",10);
+                JTextField numberOFQuestionsTextField = new JTextField("0",10);
+                panelStartQuiz.add(usernameLabel);
+                panelStartQuiz.add(usernameTextField);
+                panelStartQuiz.add(numberOFQuestionsLabel);
+                panelStartQuiz.add(numberOFQuestionsTextField);
+                b1 = new JButton("Back"); // Creating a new buttons
+                b1.addActionListener(this);
+                b2 = new JButton("Start");
+                b2.addActionListener(this);
+                panelStartQuiz.add(b1); // Adding buttons and textfield to panel
+                panelStartQuiz.add(b2);
+                panelStartQuiz.setBackground(Color.yellow); // Setting background of panel
+                panelStartQuiz.setBorder(BorderFactory.createEmptyBorder(40,40,40,40));
+                panelStartQuiz.setLayout(new GridLayout(4,2));
+                f.setContentPane(panelStartQuiz);
+                f.invalidate();
+                f.validate();
+                //b3.setText("how many questions do you want AND what is your name?");
+                //Main myMain = new Main();
+                //myMain.randomizer(0);
         }
         if(e.getSource()==b4)
         {
