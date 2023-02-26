@@ -8,11 +8,13 @@ import javax.swing.*;
 public class NewPanelTry extends JFrame{
 
     JPanel pBasePanel, pMainMenu, pAddQuestion, pEditQuestions, pStartQuiz, pHighScore, pQuizRound;
-    JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBackAddQuestion, bBackEditQuestions, bBackStartQuiz, bBackHighScore, bBackQuizRound, bSaveAddQuestion, bSaveEditQuestions, bPreviousQuizRound, bNextQuizRound, bGoStartQuiz;
+    JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBackAddQuestion, bBackEditQuestions, bBackStartQuiz, bBackHighScore, bBackQuizRound, bAddAddQuestion, bSaveEditQuestions, bPreviousQuizRound, bNextQuizRound, bGoStartQuiz;
     JTextField tNumberOfQuestionsStartQuiz, tUsernameStartQuiz, tQuestionAddQuestion, tAnswer1AddQuestion, tAnswer2AddQuestion, tAnswer3AddQuestion, tAnswerCorrectAddQuestion, tHighScore;
-    JLabel lNumberOfQuestionsStartQuiz, lUsernameStartQuiz, lQuestionAddQuestion, lAnswer1AddQuestion, lAnswer2AddQuestion, lAnswer3AddQuestion, lAnswerCorrectAddQuestion, lHighScore;
-
+    JLabel lNumberOfQuestionsStartQuiz, lUsernameStartQuiz, lQuestionAddQuestion, lAnswer1AddQuestion, lAnswer2AddQuestion, lAnswer3AddQuestion, lAnswerCorrectAddQuestion, lHighScore, lQuizRound;
+    JTextArea taHighScore, taQuizRound;
     public NewPanelTry() throws IOException {
+
+        int questionCounter = 1;
 
         pBasePanel = new JPanel();//Base panel (every other panel will be displayed on this panel)
         setTitle("Math Quiz");
@@ -37,7 +39,7 @@ public class NewPanelTry extends JFrame{
         bBackStartQuiz = new JButton("Back");
         bBackHighScore = new JButton("Back");
         bBackQuizRound = new JButton("Back");
-        bSaveAddQuestion = new JButton("Save");
+        bAddAddQuestion = new JButton("Add");
         bSaveEditQuestions = new JButton("Save");
         bGoStartQuiz = new JButton("Go");
         bPreviousQuizRound = new JButton("<-");
@@ -45,27 +47,30 @@ public class NewPanelTry extends JFrame{
 
         tNumberOfQuestionsStartQuiz = new JTextField(1);//text fields
         lNumberOfQuestionsStartQuiz = new JLabel("how many questions do you want?");
-        tNumberOfQuestionsStartQuiz.add(lNumberOfQuestionsStartQuiz);
+        //tNumberOfQuestionsStartQuiz.add(lNumberOfQuestionsStartQuiz);
         tUsernameStartQuiz = new JTextField(8);
         lUsernameStartQuiz = new JLabel("enter your name: ");
-        tUsernameStartQuiz.add(lUsernameStartQuiz);
+        //tUsernameStartQuiz.add(lUsernameStartQuiz);
         tQuestionAddQuestion = new JTextField(128);
         lQuestionAddQuestion = new JLabel("write your question");
-        tQuestionAddQuestion.add(lQuestionAddQuestion);
+        //tQuestionAddQuestion.add(lQuestionAddQuestion);
         tAnswer1AddQuestion = new JTextField(32);
         lAnswer1AddQuestion = new JLabel("add a wrong answer");
-        tAnswer1AddQuestion.add(lAnswer1AddQuestion);
+        //tAnswer1AddQuestion.add(lAnswer1AddQuestion);
         tAnswer2AddQuestion = new JTextField(32);
         lAnswer2AddQuestion = new JLabel("add a wrong answer");
-        tAnswer2AddQuestion.add(lAnswer2AddQuestion);
+        //tAnswer2AddQuestion.add(lAnswer2AddQuestion);
         tAnswer3AddQuestion = new JTextField(32);
         lAnswer3AddQuestion = new JLabel("add a wrong answer");
-        tAnswer3AddQuestion.add(lAnswer3AddQuestion);
+        //tAnswer3AddQuestion.add(lAnswer3AddQuestion);
         tAnswerCorrectAddQuestion = new JTextField(32);
         lAnswerCorrectAddQuestion = new JLabel("add the correct answer");
-        tAnswerCorrectAddQuestion.add(lAnswerCorrectAddQuestion);
-        tHighScore = new JTextField();
-        lHighScore = new JLabel("here will be shown highscore");
+        //tAnswerCorrectAddQuestion.add(lAnswerCorrectAddQuestion);
+        taHighScore = new JTextArea();
+        lHighScore = new JLabel("High Scores");
+        //taHighScore.add(lHighScore);
+        taQuizRound = new JTextArea();
+        lQuizRound = new JLabel("Question" + questionCounter);
 
         bAddQuestion.addActionListener(e -> showAddQuestionPanel());//action listeners added, and stickt to MainMenu panel
         bEditQuestions.addActionListener(e -> showEditQuestionsPanel());
@@ -78,7 +83,7 @@ public class NewPanelTry extends JFrame{
         bBackStartQuiz.addActionListener(e -> unshowPanels());
         bBackHighScore.addActionListener(e -> unshowPanels());
         bBackQuizRound.addActionListener(e -> unshowPanels());
-        bSaveAddQuestion.addActionListener(e -> saveQuestion());//save the entered question and relevant answers in the question pool
+        bAddAddQuestion.addActionListener(e -> saveQuestion());//save the entered question and relevant answers in the question pool
         bGoStartQuiz.addActionListener(e -> startQuiz());
 
         pMainMenu.add(bAddQuestion);
@@ -87,38 +92,58 @@ public class NewPanelTry extends JFrame{
         pMainMenu.add(bHighScore);
         pMainMenu.setLayout(new GridLayout(2,2));
 
+        pAddQuestion.add(lQuestionAddQuestion);
         pAddQuestion.add(tQuestionAddQuestion);
+        pAddQuestion.add(lAnswer1AddQuestion);
         pAddQuestion.add(tAnswer1AddQuestion);
+        pAddQuestion.add(lAnswer2AddQuestion);
         pAddQuestion.add(tAnswer2AddQuestion);
+        pAddQuestion.add(lAnswer3AddQuestion);
         pAddQuestion.add(tAnswer3AddQuestion);
+        pAddQuestion.add(lAnswerCorrectAddQuestion);
         pAddQuestion.add(tAnswerCorrectAddQuestion);
         pAddQuestion.add(bBackAddQuestion);
-        pAddQuestion.add(bSaveAddQuestion);
+        pAddQuestion.add(bAddAddQuestion);
         pAddQuestion.setLayout(new BoxLayout(pAddQuestion, BoxLayout.PAGE_AXIS));
 
         pEditQuestions.add(bBackEditQuestions);
         pEditQuestions.add(bSaveEditQuestions);
         pEditQuestions.setLayout(new GridLayout());
 
+        pStartQuiz.add(lUsernameStartQuiz);
         pStartQuiz.add(tUsernameStartQuiz);
+        pStartQuiz.add(lNumberOfQuestionsStartQuiz);
         pStartQuiz.add(tNumberOfQuestionsStartQuiz);
         pStartQuiz.add(bBackStartQuiz);
         pStartQuiz.add(bGoStartQuiz);
+        //pStartQuiz.setLayout(new FlowLayout());
+        //pStartQuiz.setLayout(new GridLayout(6,1));
         pStartQuiz.setLayout(new BoxLayout(pStartQuiz, BoxLayout.PAGE_AXIS));
 
-        File fHighScore = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");
+        File fHighScore = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");//High Scores are handled here
         Scanner scanner = new Scanner(fHighScore);
-        scanner.useDelimiter("\\Z");
-        String content = scanner.next();
-        tHighScore.setText(content);
-        pHighScore.add(tHighScore);
+        //scanner.useDelimiter("\\Z");
+        String highscores="";
+        int i = 1;
+        while (scanner.hasNextLine()) {
+            String highscore = i + ". " + scanner.nextLine ();
+            i++;
+            highscores = highscores + highscore + "\n"  ;
+        }
+        //taHighScore.setText("High Scores: \n" + highscores);
+        taHighScore.setText(highscores);
+        pHighScore.add(lHighScore);
+        pHighScore.add(taHighScore);
         pHighScore.add(bBackHighScore);
         pHighScore.setLayout(new BoxLayout(pHighScore, BoxLayout.PAGE_AXIS));
 
-        pQuizRound.add(bBackQuizRound);
+        pQuizRound.add(lQuizRound);
+        pQuizRound.add(taQuizRound);
         pQuizRound.add(bPreviousQuizRound);
         pQuizRound.add(bNextQuizRound);
+        pQuizRound.add(bBackQuizRound);
         pQuizRound.setLayout(new BoxLayout(pQuizRound, BoxLayout.PAGE_AXIS));
+        //pQuizRound.setLayout(new GridLayout(4,2));
 
         pBasePanel.add(pMainMenu);//here we add all panels "as invisible" to the basePanel
         getContentPane().add(pBasePanel);
@@ -166,16 +191,16 @@ public class NewPanelTry extends JFrame{
     }
 
     void startQuiz(){ //this will change removeAll() and add new components
-        unshowPanels();
-        pMainMenu.setVisible(false);
+        pBasePanel.removeAll();
         String username = tUsernameStartQuiz.getText();
         int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
         JLabel lUsername = new JLabel(username);
         JLabel lNumberOfQuestions = new JLabel(String.valueOf(numberOfQuestions));
         pQuizRound.add(lUsername);
         pQuizRound.add(lNumberOfQuestions);
-        pQuizRound.setVisible(true);
-
+        pBasePanel.add(pQuizRound);
+        pBasePanel.revalidate();
+        pBasePanel.repaint();
     }
     void saveQuestion(){
         //TODO save the entered question in the Question Pool
