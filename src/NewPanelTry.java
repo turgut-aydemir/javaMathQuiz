@@ -24,7 +24,7 @@ public class NewPanelTry extends JFrame{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(700, 700));
         pBasePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        pBasePanel.setLayout(new GridLayout(2,2));
+        pBasePanel.setLayout(new GridLayout());
 
         pAddQuestion = new JPanel();//other panels
         pEditQuestions = new JPanel();
@@ -89,7 +89,7 @@ public class NewPanelTry extends JFrame{
         pAddQuestion.add(tAnswerCorrect);
         pAddQuestion.add(bBackAddQuestion);
         pAddQuestion.add(bSaveAddQuestion);
-        pAddQuestion.setLayout(new GridLayout(4,4));
+        pAddQuestion.setLayout(new GridLayout(2,5));
 
         pEditQuestions.add(bBackEditQuestions);
         pEditQuestions.add(bSaveEditQuestions);
@@ -101,7 +101,7 @@ public class NewPanelTry extends JFrame{
         pStartQuiz.add(tUsername);
         pStartQuiz.add(lNumberOfQuestions);
         pStartQuiz.add(tNumberOfQuestion);
-        pStartQuiz.setLayout(new FlowLayout());
+        pStartQuiz.setLayout(new GridLayout());
 
         pHighScore.add(bBackHighScore);
         File fHighScore = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");
@@ -116,58 +116,53 @@ public class NewPanelTry extends JFrame{
         pQuizRound.add(bPrevious);
         pQuizRound.add(bNext);
 
-        pAddQuestion.setVisible(false);
-        pEditQuestions.setVisible(false);
-        pStartQuiz.setVisible(false);
-        pHighScore.setVisible(false);
-        pQuizRound.setVisible(false);
 
         pBasePanel.add(pMainMenu);//here we add all panels "as invisible" to the basePanel
-        pBasePanel.add(pAddQuestion);
-        pBasePanel.add(pEditQuestions,BorderLayout.CENTER);
-        pBasePanel.add(pStartQuiz,BorderLayout.CENTER);
-        pBasePanel.add(pHighScore,BorderLayout.CENTER);
-        pBasePanel.add(pQuizRound,BorderLayout.CENTER);
         getContentPane().add(pBasePanel);
         pack();
 
     }
 
     void showAddQuestionPanel(){
-        pMainMenu.setVisible(false);
-        //pAddQuestion.revalidate();
-        pAddQuestion.setVisible(true);
-        //getContentPane().add(pBasePanel);
-        //pack();
-        //new NewPanelTry().setVisible(true);//CHANGE THIS AND FIND A WAY TO REFRESH PANEL LIKE IN JS
+        pBasePanel.remove(pMainMenu);
+        pBasePanel.add(pAddQuestion);
+        pBasePanel.revalidate();
+        pBasePanel.repaint();
+
     }
     void showEditQuestionsPanel(){
-        pMainMenu.setVisible(false);
-        pEditQuestions.setVisible(true);
+        pBasePanel.remove(pMainMenu);
+        pBasePanel.add(pEditQuestions);
+        pBasePanel.revalidate();
+        pBasePanel.repaint();
     }
     void showStartQuizPanel(){
-        pMainMenu.setVisible(false);
-        pStartQuiz.setVisible(true);
+        pBasePanel.remove(pMainMenu);
+        pBasePanel.add(pStartQuiz);
+        pBasePanel.revalidate();
+        pBasePanel.repaint();
     }
     void showHighScorePanel(){
-        pMainMenu.setVisible(false);
-        pHighScore.setVisible(true);
+        pBasePanel.remove(pMainMenu);
+        pBasePanel.add(pHighScore);
+        pBasePanel.revalidate();
+        pBasePanel.repaint();
     }
     void showQuizRoundPanel(){
-        pStartQuiz.setVisible(false);
-        pQuizRound.setVisible(true);
+        pBasePanel.remove(pStartQuiz);
+        pBasePanel.add(pQuizRound);
+        pBasePanel.revalidate();
+        pBasePanel.repaint();
     }
 
     void unshowPanels(){
-        pHighScore.setVisible(false);
-        pAddQuestion.setVisible(false);
-        pEditQuestions.setVisible(false);
-        pStartQuiz.setVisible(false);
-        pQuizRound.setVisible(false);
-        pMainMenu.setVisible(true);
+        pBasePanel.removeAll();
+        pBasePanel.add(pMainMenu);
+        pBasePanel.revalidate();
+        pBasePanel.repaint();
     }
 
-    void startQuiz(){
+    void startQuiz(){ //this will change removeAll() and add new components
         unshowPanels();
         pMainMenu.setVisible(false);
         String username = tUsername.getText();
