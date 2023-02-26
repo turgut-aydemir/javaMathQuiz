@@ -4,8 +4,9 @@ import javax.swing.*;
 public class NewPanelTry extends JFrame{
 
     JPanel pBasePanel, pMainMenu, pAddQuestion, pEditQuestions, pStartQuiz, pHighScore, pQuizRound;
-    JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBack, bSave, bPrevious, bNext, bGo;
+    JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBackAddQuestion, bBackEditQuestions, bBackStartQuiz, bBackHighScore, bBackQuizRound, bSaveAddQuestion, bSaveEditQuestions, bPrevious, bNext, bGo;
     JTextField tNumberOfQuestion, tUsername, tQuestion, tAnswer1, tAnswer2, tAnswer3, tAnswerCorrect, tHighScore;
+    JLabel lNumberOfQuestions, lUsername;
 
     public NewPanelTry(){
 
@@ -27,15 +28,24 @@ public class NewPanelTry extends JFrame{
         bEditQuestions = new JButton("Edit Questions");
         bStartQuiz = new JButton("Start Quiz");
         bHighScore = new JButton("High Score");
-        bBack = new JButton("Back");
-        //bBack.setBounds(200, 200, 300, 30);
-        bSave = new JButton("Save");
+        bBackAddQuestion = new JButton("Back");
+        bBackEditQuestions = new JButton("Back");
+        bBackStartQuiz = new JButton("Back");
+        bBackHighScore = new JButton("Back");
+        bBackQuizRound = new JButton("Back");
+        //bBack.setBounds(600, 600, 300, 30);
+        bSaveAddQuestion = new JButton("Save");
+        bSaveEditQuestions = new JButton("Save");
         bGo = new JButton("Go");
         bPrevious = new JButton("<-");
         bNext = new JButton("->");
 
-        tNumberOfQuestion = new JTextField("how many questions do you want?");//text fields
-        tUsername = new JTextField("enter your name");
+        tNumberOfQuestion = new JTextField(1);//text fields
+        lNumberOfQuestions = new JLabel("how many questions do you want?");
+        lUsername = new JLabel("name: ");
+        tNumberOfQuestion.add(lNumberOfQuestions);
+        tUsername = new JTextField(8);
+        tUsername.setToolTipText("<html><b><font color=clay>" + "enter your name" + "</font></b></html>");
         tQuestion = new JTextField("write your question here");
         tAnswer1 = new JTextField("add a wrong answer");
         tAnswer2 = new JTextField("add a wrong answer");
@@ -49,38 +59,46 @@ public class NewPanelTry extends JFrame{
         bHighScore.addActionListener(e -> showHighScorePanel());
         bPrevious.addActionListener(e -> showPreviousQuestion());
         bNext.addActionListener(e -> showNextQuestion());
-        bBack.addActionListener(e -> unshowPanels());//if user clicks back on any panel, he/she should land on the main menu
-        bSave.addActionListener(e -> saveQuestion());//save the entered question and relevant answers in the question pool
+        bBackAddQuestion.addActionListener(e -> unshowPanels());//if user clicks back on any panel, he/she should land on the main menu
+        bBackEditQuestions.addActionListener(e -> unshowPanels());
+        bBackStartQuiz.addActionListener(e -> unshowPanels());
+        bBackHighScore.addActionListener(e -> unshowPanels());
+        bBackQuizRound.addActionListener(e -> unshowPanels());
+        bSaveAddQuestion.addActionListener(e -> saveQuestion());//save the entered question and relevant answers in the question pool
+        bGo.addActionListener(e -> startQuiz());
 
         pMainMenu.add(bAddQuestion);
         pMainMenu.add(bEditQuestions);
         pMainMenu.add(bStartQuiz);
         pMainMenu.add(bHighScore);
-        //pMainMenu.setLayout(new GridLayout(2,2));
+        pMainMenu.setLayout(new GridLayout(2,2));
 
-        pAddQuestion.add(bBack);
-        pAddQuestion.add(bSave);
         pAddQuestion.add(tQuestion);
         pAddQuestion.add(tAnswer1);
         pAddQuestion.add(tAnswer2);
         pAddQuestion.add(tAnswer3);
         pAddQuestion.add(tAnswerCorrect);
-        pAddQuestion.setLayout(new GridLayout(4,2));
+        pAddQuestion.add(bBackAddQuestion);
+        pAddQuestion.add(bSaveAddQuestion);
+        pAddQuestion.setLayout(new GridLayout(4,4));
 
-        pEditQuestions.add(bBack);
-        pEditQuestions.add(bSave);
-        //pEditQuestions.setLayout(new GridLayout(8,8));
+        pEditQuestions.add(bBackEditQuestions);
+        pEditQuestions.add(bSaveEditQuestions);
+        pEditQuestions.setLayout(new GridLayout());
 
-        pStartQuiz.add(bBack);
+        pStartQuiz.add(bBackStartQuiz);
         pStartQuiz.add(bGo);
+        pStartQuiz.add(lUsername);
         pStartQuiz.add(tUsername);
+        pStartQuiz.add(lNumberOfQuestions);
         pStartQuiz.add(tNumberOfQuestion);
-        //pStartQuiz.setLayout(new GridLayout(8,8));
+        pStartQuiz.setLayout(new FlowLayout());
 
-        pHighScore.add(bBack);
+        pHighScore.add(bBackHighScore);
         pHighScore.add(tHighScore);
-        //pHighScore.setLayout(new GridLayout(8,8));
+        pHighScore.setLayout(new GridLayout());
 
+        pQuizRound.add(bBackQuizRound);
         pQuizRound.add(bPrevious);
         pQuizRound.add(bNext);
 
@@ -130,9 +148,23 @@ public class NewPanelTry extends JFrame{
         pHighScore.setVisible(false);
         pAddQuestion.setVisible(false);
         pEditQuestions.setVisible(false);
+        pStartQuiz.setVisible(false);
+        pQuizRound.setVisible(false);
         pMainMenu.setVisible(true);
     }
 
+    void startQuiz(){
+        unshowPanels();
+        pMainMenu.setVisible(false);
+        String username = tUsername.getText();
+        int numberOfQuestions = Integer.parseInt(tNumberOfQuestion.getText());
+        JLabel lUsername = new JLabel(username);
+        JLabel lNumberOfQuestions = new JLabel(String.valueOf(numberOfQuestions));
+        pQuizRound.add(lUsername);
+        pQuizRound.add(lNumberOfQuestions);
+        pQuizRound.setVisible(true);
+
+    }
     void saveQuestion(){
         //TODO save the entered question in the Question Pool
     }
