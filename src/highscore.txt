@@ -1,0 +1,3 @@
+turgut, 90
+cengiz, 80
+emre, 60

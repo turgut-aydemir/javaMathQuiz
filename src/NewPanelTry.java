@@ -1,4 +1,13 @@
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import javax.swing.*;
 
 public class NewPanelTry extends JFrame{
@@ -8,7 +17,7 @@ public class NewPanelTry extends JFrame{
     JTextField tNumberOfQuestion, tUsername, tQuestion, tAnswer1, tAnswer2, tAnswer3, tAnswerCorrect, tHighScore;
     JLabel lNumberOfQuestions, lUsername;
 
-    public NewPanelTry(){
+    public NewPanelTry() throws IOException {
 
         pBasePanel = new JPanel();//Base panel (every other panel will be displayed on this panel)
         setTitle("Math Quiz");
@@ -51,7 +60,7 @@ public class NewPanelTry extends JFrame{
         tAnswer2 = new JTextField("add a wrong answer");
         tAnswer3 = new JTextField("add a wrong answer");
         tAnswerCorrect = new JTextField("add the correct answer");
-        tHighScore = new JTextField("HighScore");
+        tHighScore = new JTextField();
 
         bAddQuestion.addActionListener(e -> showAddQuestionPanel());//action listeners added, and stickt to MainMenu panel
         bEditQuestions.addActionListener(e -> showEditQuestionsPanel());
@@ -95,6 +104,14 @@ public class NewPanelTry extends JFrame{
         pStartQuiz.setLayout(new FlowLayout());
 
         pHighScore.add(bBackHighScore);
+        //List<String> lHighScore = new ArrayList<String>();
+        File fHighScore = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");
+        FileInputStream fis = new FileInputStream(fHighScore);
+        byte[] data = new byte[(int) fHighScore.length()];
+        fis.read(data);
+        fis.close();
+        String str = new String(data, "UTF-8");
+        tHighScore.setText(str);
         pHighScore.add(tHighScore);
         pHighScore.setLayout(new GridLayout());
 
@@ -195,8 +212,14 @@ public static void main(String args[]){
     EventQueue.invokeLater(new Runnable(){
         @Override
         public void run(){
+            try {
                 new NewPanelTry().setVisible(true);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+        }
     });}
 }
 
