@@ -104,14 +104,11 @@ public class NewPanelTry extends JFrame{
         pStartQuiz.setLayout(new FlowLayout());
 
         pHighScore.add(bBackHighScore);
-        //List<String> lHighScore = new ArrayList<String>();
         File fHighScore = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");
-        FileInputStream fis = new FileInputStream(fHighScore);
-        byte[] data = new byte[(int) fHighScore.length()];
-        fis.read(data);
-        fis.close();
-        String str = new String(data, "UTF-8");
-        tHighScore.setText(str);
+        Scanner scanner = new Scanner(fHighScore);
+        scanner.useDelimiter("\\Z");
+        String content = scanner.next();
+        tHighScore.setText(content);
         pHighScore.add(tHighScore);
         pHighScore.setLayout(new GridLayout());
 
