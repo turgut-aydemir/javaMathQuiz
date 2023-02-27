@@ -1,2 +1,1 @@
-TODO find a way of saving questions as JSON or in csv format
-can do the same for high scores & usernames in results
+How old are you?, Answer1: 40, Answer2: 13, Answer3: 70, CorrectAnswer: 37

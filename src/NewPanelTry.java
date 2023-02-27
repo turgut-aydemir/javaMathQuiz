@@ -2,13 +2,18 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import javax.swing.*;
+
+import static java.nio.file.StandardOpenOption.APPEND;
 
 public class NewPanelTry extends JFrame{
 
     JPanel pBasePanel, pMainMenu, pAddQuestion, pEditQuestions, pStartQuiz, pHighScore, pQuizRound;
-    JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBackAddQuestion, bBackEditQuestions, bBackStartQuiz, bBackHighScore, bBackQuizRound, bAddAddQuestion, bSaveEditQuestions, bPreviousQuizRound, bNextQuizRound, bGoStartQuiz;
+    JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBackAddQuestion, bBackEditQuestions, bBackStartQuiz, bBackHighScore, bBackQuizRound, bAddAddQuestion, bSaveEditQuestions, bPreviousQuizRound, bNextQuizRound, bGoStartQuiz, bAgainQuizRound;
     JTextField tNumberOfQuestionsStartQuiz, tUsernameStartQuiz, tQuestionAddQuestion, tAnswer1AddQuestion, tAnswer2AddQuestion, tAnswer3AddQuestion, tAnswerCorrectAddQuestion, tHighScore;
     JLabel lNumberOfQuestionsStartQuiz, lUsernameStartQuiz, lQuestionAddQuestion, lAnswer1AddQuestion, lAnswer2AddQuestion, lAnswer3AddQuestion, lAnswerCorrectAddQuestion, lHighScore, lQuizRound;
     JTextArea taHighScore, taQuizRound;
@@ -44,6 +49,7 @@ public class NewPanelTry extends JFrame{
         bGoStartQuiz = new JButton("Go");
         bPreviousQuizRound = new JButton("<-");
         bNextQuizRound = new JButton("->");
+        bAgainQuizRound = new JButton("Again");
 
         tNumberOfQuestionsStartQuiz = new JTextField(1);//text fields
         lNumberOfQuestionsStartQuiz = new JLabel("how many questions do you want?");
@@ -84,7 +90,14 @@ public class NewPanelTry extends JFrame{
         bBackHighScore.addActionListener(e -> unshowPanels());
         bBackQuizRound.addActionListener(e -> unshowPanels());
         bAddAddQuestion.addActionListener(e -> saveQuestion());//save the entered question and relevant answers in the question pool
-        bGoStartQuiz.addActionListener(e -> startQuiz());
+        bGoStartQuiz.addActionListener(e -> {
+            try {
+                showQuizRoundPanel();
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        bAgainQuizRound.addActionListener(e -> saveResult());//if user doesn't click on that, results would not be saved!
 
         pMainMenu.add(bAddQuestion);
         pMainMenu.add(bEditQuestions);
@@ -176,34 +189,71 @@ public class NewPanelTry extends JFrame{
         pBasePanel.revalidate();
         pBasePanel.repaint();
     }
-    void showQuizRoundPanel(){
-        pBasePanel.remove(pStartQuiz);
+    void showQuizRoundPanel() throws FileNotFoundException {
+        String username = tUsernameStartQuiz.getText();
+        int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
+        pBasePanel.removeAll();
+        getQuestions();
+        //startQuiz();
         pBasePanel.add(pQuizRound);
         pBasePanel.revalidate();
         pBasePanel.repaint();
     }
+
+    void getQuestions() throws FileNotFoundException { //this will change removeAll() and add new components
+        File fQuestions = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
+        Scanner scanner = new Scanner(fQuestions);
+        //scanner.useDelimiter("\\Z");
+        String questions="";
+        int i = 1;
+        while (scanner.hasNextLine()) {
+            String question = i + ". " + scanner.nextLine ();
+            i++;
+            questions = questions + question + "\n"  ;
+        taQuizRound.setText(questions);
+    }}
 
     void unshowPanels(){
         pBasePanel.removeAll();
         pBasePanel.add(pMainMenu);
+        clearAddQuestionTextFields();
+        clearStartQuizTextFields();
         pBasePanel.revalidate();
         pBasePanel.repaint();
     }
 
-    void startQuiz(){ //this will change removeAll() and add new components
-        pBasePanel.removeAll();
-        String username = tUsernameStartQuiz.getText();
-        int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
-        JLabel lUsername = new JLabel(username);
-        JLabel lNumberOfQuestions = new JLabel(String.valueOf(numberOfQuestions));
-        pQuizRound.add(lUsername);
-        pQuizRound.add(lNumberOfQuestions);
-        pBasePanel.add(pQuizRound);
-        pBasePanel.revalidate();
-        pBasePanel.repaint();
+    void clearAddQuestionTextFields(){ //to clean the text fields in AddQuestion panel after adding a question.
+        tQuestionAddQuestion.setText("");
+        tAnswer1AddQuestion.setText("");
+        tAnswer2AddQuestion.setText("");
+        tAnswer3AddQuestion.setText("");
+        tAnswerCorrectAddQuestion.setText("");
+    }
+
+    void clearStartQuizTextFields(){ //to clean the text fields in AddQuestion panel after adding a question.
+        tUsernameStartQuiz.setText("");
+        tNumberOfQuestionsStartQuiz.setText("");
     }
     void saveQuestion(){
         //TODO save the entered question in the Question Pool
+        String question = tQuestionAddQuestion.getText();
+        String answer1 = tAnswer1AddQuestion.getText();
+        String answer2 = tAnswer2AddQuestion.getText();
+        String answer3 = tAnswer3AddQuestion.getText();
+        String correctAnswer = tAnswerCorrectAddQuestion.getText();
+        //File fAddQuestion = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
+        String addQuestion = "Qestion: " + question + ", Answer1: " + answer1 + ", Answer2: " + answer2 + ", Answer3: " + answer3 + ", CorrectAnswer: " + correctAnswer + "\n";
+        //fAddQuestion
+        Path path = Paths.get("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");
+        byte[] arr = addQuestion.getBytes();
+        try {
+            Files.write(path, arr, APPEND);
+        }
+        catch (IOException ex) {
+            System.out.print("Invalid Path");
+        }
+        //clearAddQuestionTextFields();
+        unshowPanels();
     }
 
     void showPreviousQuestion(){
@@ -218,6 +268,9 @@ public class NewPanelTry extends JFrame{
         //TODO result screen will show how many questions are correct answered among total number of questions
     }
 
+    void saveResult(){
+        //TODO save the results obtained from the QuizRound with username on the result.txt file and dont forget highscores
+    }
     void showHighScore(){
         //TODO high score will show the leaderboard (username & percentages of old users)
     }
