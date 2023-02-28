@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Random;
 import java.util.Scanner;
 import javax.swing.*;
+import com.sun.jdi.IntegerValue;
 
 import static java.nio.file.StandardOpenOption.APPEND;
 
@@ -94,6 +96,8 @@ public class NewPanelTry extends JFrame{
             try {
                 showQuizRoundPanel();
             } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
@@ -189,7 +193,7 @@ public class NewPanelTry extends JFrame{
         pBasePanel.revalidate();
         pBasePanel.repaint();
     }
-    void showQuizRoundPanel() throws FileNotFoundException {
+    void showQuizRoundPanel() throws IOException {
         String username = tUsernameStartQuiz.getText();
         int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
         pBasePanel.removeAll();
@@ -200,18 +204,39 @@ public class NewPanelTry extends JFrame{
         pBasePanel.repaint();
     }
 
-    void getQuestions() throws FileNotFoundException { //this will change removeAll() and add new components
+    void getQuestions() throws IOException { //this will change removeAll() and add new components
         File fQuestions = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
         Scanner scanner = new Scanner(fQuestions);
+
+        Random n = new Random(10);
+        int Max=5,  Min=1, ii=0;
+        String fileName="C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
+        Path path = Paths.get(fileName);
+        long lines = 0;
+        try {
+            lines = Files.lines(path).count();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("satır sayısı: " + lines);
+        int i = (int) (Math.random() * ((Max - Min) + 1));
+        int nn=3;
+
+        String questions = Files.readAllLines(Paths.get("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(nn);
+
+        String question = Files.readAllLines(Paths.get("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(i);
+        taQuizRound.setText(question);}
+
         //scanner.useDelimiter("\\Z");
-        String questions="";
+        /*String questions="";
         int i = 1;
         while (scanner.hasNextLine()) {
             String question = i + ". " + scanner.nextLine ();
             i++;
             questions = questions + question + "\n"  ;
         taQuizRound.setText(questions);
-    }}
+    }}*/
 
     void unshowPanels(){
         pBasePanel.removeAll();
