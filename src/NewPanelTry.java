@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import javax.swing.*;
-import com.sun.jdi.IntegerValue;
 
 import static java.nio.file.StandardOpenOption.APPEND;
 
@@ -25,6 +26,7 @@ public class NewPanelTry extends JFrame{
 
         pBasePanel = new JPanel();//Base panel (every other panel will be displayed on this panel)
         setTitle("Math Quiz");
+        //pBasePanel.setBackground(Color.WHITE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(700, 700));
         pBasePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -41,19 +43,19 @@ public class NewPanelTry extends JFrame{
         bEditQuestions = new JButton("Edit Questions");
         bStartQuiz = new JButton("Start Quiz");
         bHighScore = new JButton("High Score");
-        bBackAddQuestion = new JButton("Back");
+        bBackAddQuestion = new JButton("Back");//back button unshows all panels and shows main panel (back to main menu)
         bBackEditQuestions = new JButton("Back");
         bBackStartQuiz = new JButton("Back");
         bBackHighScore = new JButton("Back");
         bBackQuizRound = new JButton("Back");
-        bAddAddQuestion = new JButton("Add");
+        bAddAddQuestion = new JButton("Add");//saves the question into the questions.txt file as a new line
         bSaveEditQuestions = new JButton("Save");
-        bGoStartQuiz = new JButton("Go");
+        bGoStartQuiz = new JButton("Go");//number of questions & username is obtained here, don't forget to use them after quiz round for highscore and results
         bPreviousQuizRound = new JButton("<-");
         bNextQuizRound = new JButton("->");
-        bAgainQuizRound = new JButton("Again");
+        bAgainQuizRound = new JButton("Again");//different than back, again goes to startQuiz panel
 
-        tNumberOfQuestionsStartQuiz = new JTextField(1);//text fields
+        tNumberOfQuestionsStartQuiz = new JTextField(1);//text fields and related labels
         lNumberOfQuestionsStartQuiz = new JLabel("how many questions do you want?");
         //tNumberOfQuestionsStartQuiz.add(lNumberOfQuestionsStartQuiz);
         tUsernameStartQuiz = new JTextField(8);
@@ -80,12 +82,10 @@ public class NewPanelTry extends JFrame{
         taQuizRound = new JTextArea();
         lQuizRound = new JLabel("Question" + questionCounter);
 
-        bAddQuestion.addActionListener(e -> showAddQuestionPanel());//action listeners added, and stickt to MainMenu panel
+        bAddQuestion.addActionListener(e -> showAddQuestionPanel());//action listeners for buttons
         bEditQuestions.addActionListener(e -> showEditQuestionsPanel());
         bStartQuiz.addActionListener(e -> showStartQuizPanel());
         bHighScore.addActionListener(e -> showHighScorePanel());
-        bPreviousQuizRound.addActionListener(e -> showPreviousQuestion());
-        bNextQuizRound.addActionListener(e -> showNextQuestion());
         bBackAddQuestion.addActionListener(e -> unshowPanels());//if user clicks back on any panel, he/she should land on the main menu
         bBackEditQuestions.addActionListener(e -> unshowPanels());
         bBackStartQuiz.addActionListener(e -> unshowPanels());
@@ -100,8 +100,19 @@ public class NewPanelTry extends JFrame{
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+            String username = tUsernameStartQuiz.getText();//this will be used in saveResult()
+            int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
+            getQuestions(numberOfQuestions);
+            try {
+                showFirstQuestion(numberOfQuestions);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
+        bPreviousQuizRound.addActionListener(e -> showPreviousQuestion());
+        bNextQuizRound.addActionListener(e -> showNextQuestion());
         bAgainQuizRound.addActionListener(e -> saveResult());//if user doesn't click on that, results would not be saved!
+
 
         pMainMenu.add(bAddQuestion);
         pMainMenu.add(bEditQuestions);
@@ -133,11 +144,11 @@ public class NewPanelTry extends JFrame{
         pStartQuiz.add(tNumberOfQuestionsStartQuiz);
         pStartQuiz.add(bBackStartQuiz);
         pStartQuiz.add(bGoStartQuiz);
-        //pStartQuiz.setLayout(new FlowLayout());
+        pStartQuiz.setLayout(new FlowLayout());
         //pStartQuiz.setLayout(new GridLayout(6,1));
-        pStartQuiz.setLayout(new BoxLayout(pStartQuiz, BoxLayout.PAGE_AXIS));
+        //pStartQuiz.setLayout(new BoxLayout(pStartQuiz, BoxLayout.PAGE_AXIS));
 
-        File fHighScore = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");//High Scores are handled here
+        File fHighScore = new File("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");//High Scores are shown directly (no need an extra function like others)
         Scanner scanner = new Scanner(fHighScore);
         //scanner.useDelimiter("\\Z");
         String highscores="";
@@ -149,6 +160,7 @@ public class NewPanelTry extends JFrame{
         }
         //taHighScore.setText("High Scores: \n" + highscores);
         taHighScore.setText(highscores);
+
         pHighScore.add(lHighScore);
         pHighScore.add(taHighScore);
         pHighScore.add(bBackHighScore);
@@ -162,7 +174,7 @@ public class NewPanelTry extends JFrame{
         pQuizRound.setLayout(new BoxLayout(pQuizRound, BoxLayout.PAGE_AXIS));
         //pQuizRound.setLayout(new GridLayout(4,2));
 
-        pBasePanel.add(pMainMenu);//here we add all panels "as invisible" to the basePanel
+        pBasePanel.add(pMainMenu);//basePanel will 1st show the mainMenu
         getContentPane().add(pBasePanel);
         pack();
 
@@ -193,50 +205,18 @@ public class NewPanelTry extends JFrame{
         pBasePanel.revalidate();
         pBasePanel.repaint();
     }
-    void showQuizRoundPanel() throws IOException {
+    String showQuizRoundPanel() throws IOException {
         String username = tUsernameStartQuiz.getText();
         int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
         pBasePanel.removeAll();
-        getQuestions();
+        getQuestions(numberOfQuestions);
         //startQuiz();
         pBasePanel.add(pQuizRound);
         pBasePanel.revalidate();
         pBasePanel.repaint();
+        String usernameAndNumberOFQuestions = username + "," + numberOfQuestions;
+        return usernameAndNumberOFQuestions;
     }
-
-    void getQuestions() throws IOException { //this will change removeAll() and add new components
-        File fQuestions = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
-        Scanner scanner = new Scanner(fQuestions);
-
-        Random n = new Random(10);
-        int Max=5,  Min=1, ii=0;
-        String fileName="C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
-        Path path = Paths.get(fileName);
-        long lines = 0;
-        try {
-            lines = Files.lines(path).count();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("satır sayısı: " + lines);
-        int i = (int) (Math.random() * ((Max - Min) + 1));
-        int nn=3;
-
-        String questions = Files.readAllLines(Paths.get("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(nn);
-
-        String question = Files.readAllLines(Paths.get("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(i);
-        taQuizRound.setText(question);}
-
-        //scanner.useDelimiter("\\Z");
-        /*String questions="";
-        int i = 1;
-        while (scanner.hasNextLine()) {
-            String question = i + ". " + scanner.nextLine ();
-            i++;
-            questions = questions + question + "\n"  ;
-        taQuizRound.setText(questions);
-    }}*/
 
     void unshowPanels(){
         pBasePanel.removeAll();
@@ -269,7 +249,7 @@ public class NewPanelTry extends JFrame{
         //File fAddQuestion = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
         String addQuestion = "Qestion: " + question + ", Answer1: " + answer1 + ", Answer2: " + answer2 + ", Answer3: " + answer3 + ", CorrectAnswer: " + correctAnswer + "\n";
         //fAddQuestion
-        Path path = Paths.get("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");
+        Path path = Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");
         byte[] arr = addQuestion.getBytes();
         try {
             Files.write(path, arr, APPEND);
@@ -280,6 +260,80 @@ public class NewPanelTry extends JFrame{
         //clearAddQuestionTextFields();
         unshowPanels();
     }
+
+    List<String> getQuestions(int numberOfQuestions) throws IOException {
+
+        int reserveSizeOFQuestionsList = numberOfQuestions;
+        String currentLine;
+        List <String> reserveQuestionsList= new ArrayList<>(reserveSizeOFQuestionsList);
+        int reserveCounter=0;
+        Random ra = new Random();
+        int randomNumber;
+        Scanner sc = new Scanner(new File("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).useDelimiter("\n");
+        while (sc.hasNext())
+        {
+            currentLine = sc.next();
+            reserveCounter ++;
+            if (reserveCounter<=reserveSizeOFQuestionsList)
+            {
+                reserveQuestionsList.add(currentLine);
+            }
+            else if ((randomNumber = ra.nextInt(reserveCounter))<reserveSizeOFQuestionsList)
+            {
+                reserveQuestionsList.set(randomNumber, currentLine);
+            }
+        }
+        //showQuestions(numberOfQuestions, username, reserveQuestionsList);//list length is = numberOfQuestions,so 1 of them is enough
+        //taQuizRound.setText(reserveQuestionsList.get(1));
+        return reserveQuestionsList;
+    }
+
+    void showQestions(int numberOFQuestions) throws IOException {
+        getQuestions(numberOFQuestions);
+
+    }
+    void showFirstQuestion(int numberOFQuestions) throws IOException {
+        List <String> reserveQuestionsList = getQuestions(numberOFQuestions);
+        String question1 = reserveQuestionsList.get(0);
+        taQuizRound.setText(question1);
+    }
+
+    /*{ //this will change removeAll() and add new components
+        File fQuestions = new File("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
+        Scanner scanner = new Scanner(fQuestions);
+
+        Random n = new Random(10);
+        int Max=5,  Min=1, ii=0;
+        String fileName="C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
+        Path path = Paths.get(fileName);
+        long lines = 0;
+        try {
+            lines = Files.lines(path).count();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int i = (int) (Math.random() * ((Max - Min) + 1));
+        int nn=3;
+
+        String questions = Files.readAllLines(Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(nn);
+
+        String question = Files.readAllLines(Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(i);
+        taQuizRound.setText(question);}
+
+     */
+
+
+
+    //scanner.useDelimiter("\\Z");
+        /*String questions="";
+        int i = 1;
+        while (scanner.hasNextLine()) {
+            String question = i + ". " + scanner.nextLine ();
+            i++;
+            questions = questions + question + "\n"  ;
+        taQuizRound.setText(questions);
+    }}*/
 
     void showPreviousQuestion(){
         //TODO go back to the previous question
@@ -299,8 +353,6 @@ public class NewPanelTry extends JFrame{
     void showHighScore(){
         //TODO high score will show the leaderboard (username & percentages of old users)
     }
-
-
 
 
 
