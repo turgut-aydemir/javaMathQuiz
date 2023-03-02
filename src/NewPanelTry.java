@@ -23,6 +23,8 @@ public class NewPanelTry extends JFrame{
     JRadioButton rbAnswer1, rbAnswer2, rbAnswer3, rbCorrectAnswer;
     List<String> reserveQuestionsList;
 
+    int counter1;
+
     public NewPanelTry() throws IOException {
 
         pBasePanel = new JPanel();//Base panel (every other panel will be displayed on this panel)
@@ -133,7 +135,8 @@ public class NewPanelTry extends JFrame{
                 throw new RuntimeException(ex);
             }
             try {
-                showFirstQuestion();
+                counter1 = showFirstQuestion();
+
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -146,7 +149,7 @@ public class NewPanelTry extends JFrame{
             }
         });
         bPreviousQuizRound.addActionListener(e -> showPreviousQuestion());
-        bNextQuizRound.addActionListener(e -> showNextQuestion(2));
+        bNextQuizRound.addActionListener(e -> showNextQuestion(counter1));
         bAgainQuizRound.addActionListener(e -> saveResult());//if user doesn't click on that, results would not be saved!
 
         pMainMenu.add(bAddQuestion);
@@ -391,7 +394,7 @@ public class NewPanelTry extends JFrame{
             rbCorrectAnswer.setText(tokens[4]);
         }
 
-        void showFirstQuestion () throws IOException {
+        int showFirstQuestion () throws IOException {
             int questionCounter = 1;
             String question1 = reserveQuestionsList.get(questionCounter-1);
             String[] tokens = question1.split(",");
@@ -400,8 +403,9 @@ public class NewPanelTry extends JFrame{
             rbAnswer2.setText(tokens[2]);
             rbAnswer3.setText(tokens[3]);
             rbCorrectAnswer.setText(tokens[4]);
-
-            System.out.println(reserveQuestionsList);
+            questionCounter++;
+            return questionCounter;
+            //System.out.println(reserveQuestionsList);
             }
             //String question1 = reserveQuestionsList.get(0);
 
