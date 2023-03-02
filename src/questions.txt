@@ -14,4 +14,4 @@ What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: T
 What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
 What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
 What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-Qestion: How is you day going?, Answer1: good, Answer2: bad, Answer3: ok, CorrectAnswer: perfect
+How is you day going?, Answer1: good, Answer2: bad, Answer3: ok, CorrectAnswer: perfect

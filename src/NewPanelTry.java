@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.*;
 
 import static java.nio.file.StandardOpenOption.APPEND;
@@ -17,9 +19,10 @@ public class NewPanelTry extends JFrame{
 
     JPanel pBasePanel, pMainMenu, pAddQuestion, pEditQuestions, pStartQuiz, pHighScore, pQuizRound;
     JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBackAddQuestion, bBackEditQuestions, bBackStartQuiz, bBackHighScore, bBackQuizRound, bAddAddQuestion, bSaveEditQuestions, bPreviousQuizRound, bNextQuizRound, bGoStartQuiz, bAgainQuizRound;
-    JTextField tNumberOfQuestionsStartQuiz, tUsernameStartQuiz, tQuestionAddQuestion, tAnswer1AddQuestion, tAnswer2AddQuestion, tAnswer3AddQuestion, tAnswerCorrectAddQuestion, tHighScore;
-    JLabel lNumberOfQuestionsStartQuiz, lUsernameStartQuiz, lQuestionAddQuestion, lAnswer1AddQuestion, lAnswer2AddQuestion, lAnswer3AddQuestion, lAnswerCorrectAddQuestion, lHighScore, lQuizRound;
-    JTextArea taHighScore, taQuizRound;
+    JTextField tNumberOfQuestionsStartQuiz, tUsernameStartQuiz, tQuestionAddQuestion, tAnswer1AddQuestion, tAnswer2AddQuestion, tAnswer3AddQuestion, tAnswerCorrectAddQuestion, tHighScore, tQuizRound, tQuestionQuizRound;
+    JLabel lNumberOfQuestionsStartQuiz, lUsernameStartQuiz, lQuestionAddQuestion, lAnswer1AddQuestion, lAnswer2AddQuestion, lAnswer3AddQuestion, lAnswerCorrectAddQuestion, lHighScore, lQuizRound, lQuestionQuizRound, lAnswer1QuizRound, lAnswer2QuizRound, lAnswer3QuizRound, lCorrectAnswerQuizRound;
+    JTextArea taHighScore, taQuizRound, taQuestionQuizRound, taAnser1QuizRound;
+    JRadioButton rbAnswer1, rbAnswer2, rbAnswer3, rbCorrectAnswer;
     public NewPanelTry() throws IOException {
 
         int questionCounter = 1;
@@ -55,6 +58,31 @@ public class NewPanelTry extends JFrame{
         bNextQuizRound = new JButton("->");
         bAgainQuizRound = new JButton("Again");//different than back, again goes to startQuiz panel
 
+        //tQuestionQuizRound = new JTextField();
+        lQuestionQuizRound = new JLabel();
+        //tQuestionQuizRound.add(lQuestionQuizRound);
+        //lAnswer1QuizRound = new JLabel();
+        //lAnswer2QuizRound = new JLabel();
+        //lAnswer3QuizRound = new JLabel();
+        //lCorrectAnswerQuizRound = new JLabel();
+        rbAnswer1 = new JRadioButton();
+        //rbAnswer1.add(lAnswer1QuizRound);
+        rbAnswer2 = new JRadioButton();
+        //rbAnswer1.add(lAnswer2QuizRound);
+        rbAnswer3 = new JRadioButton();
+        //rbAnswer1.add(lAnswer3QuizRound);
+        rbCorrectAnswer = new JRadioButton();
+        //rbAnswer1.add(lCorrectAnswerQuizRound);
+        //ButtonGroup rbGroup = new ButtonGroup();
+        //rbGroup.add(rbAnswer1);
+        //rbGroup.add(rbAnswer2);
+        //rbGroup.add(rbAnswer3);
+        //rbGroup.add(rbCorrectAnswer);
+        //taQuestionQuizRound = new JTextArea();
+        //taQuestionQuizRound.setEditable(false);
+        //taAnser1QuizRound = new JTextArea();
+        //taAnser1QuizRound.setEditable(false);
+
         tNumberOfQuestionsStartQuiz = new JTextField(1);//text fields and related labels
         lNumberOfQuestionsStartQuiz = new JLabel("how many questions do you want?");
         //tNumberOfQuestionsStartQuiz.add(lNumberOfQuestionsStartQuiz);
@@ -79,13 +107,19 @@ public class NewPanelTry extends JFrame{
         taHighScore = new JTextArea();
         lHighScore = new JLabel("High Scores");
         //taHighScore.add(lHighScore);
-        taQuizRound = new JTextArea();
+        //tQuizRound = new JTextField();
         lQuizRound = new JLabel("Question" + questionCounter);
 
         bAddQuestion.addActionListener(e -> showAddQuestionPanel());//action listeners for buttons
         bEditQuestions.addActionListener(e -> showEditQuestionsPanel());
         bStartQuiz.addActionListener(e -> showStartQuizPanel());
-        bHighScore.addActionListener(e -> showHighScorePanel());
+        bHighScore.addActionListener(e -> {
+            try {
+                showHighScorePanel();
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         bBackAddQuestion.addActionListener(e -> unshowPanels());//if user clicks back on any panel, he/she should land on the main menu
         bBackEditQuestions.addActionListener(e -> unshowPanels());
         bBackStartQuiz.addActionListener(e -> unshowPanels());
@@ -94,17 +128,14 @@ public class NewPanelTry extends JFrame{
         bAddAddQuestion.addActionListener(e -> saveQuestion());//save the entered question and relevant answers in the question pool
         bGoStartQuiz.addActionListener(e -> {
             try {
-                showQuizRoundPanel();
-            } catch (FileNotFoundException ex) {
-                throw new RuntimeException(ex);
+                showFirstQuestion();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            String username = tUsernameStartQuiz.getText();//this will be used in saveResult()
-            int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
-            getQuestions(numberOfQuestions);
             try {
-                showFirstQuestion(numberOfQuestions);
+                showQuizRoundPanel();
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -112,7 +143,6 @@ public class NewPanelTry extends JFrame{
         bPreviousQuizRound.addActionListener(e -> showPreviousQuestion());
         bNextQuizRound.addActionListener(e -> showNextQuestion());
         bAgainQuizRound.addActionListener(e -> saveResult());//if user doesn't click on that, results would not be saved!
-
 
         pMainMenu.add(bAddQuestion);
         pMainMenu.add(bEditQuestions);
@@ -148,31 +178,50 @@ public class NewPanelTry extends JFrame{
         //pStartQuiz.setLayout(new GridLayout(6,1));
         //pStartQuiz.setLayout(new BoxLayout(pStartQuiz, BoxLayout.PAGE_AXIS));
 
-        File fHighScore = new File("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");//High Scores are shown directly (no need an extra function like others)
-        Scanner scanner = new Scanner(fHighScore);
-        //scanner.useDelimiter("\\Z");
-        String highscores="";
-        int i = 1;
-        while (scanner.hasNextLine()) {
-            String highscore = i + ". " + scanner.nextLine ();
-            i++;
-            highscores = highscores + highscore + "\n"  ;
-        }
-        //taHighScore.setText("High Scores: \n" + highscores);
-        taHighScore.setText(highscores);
 
         pHighScore.add(lHighScore);
         pHighScore.add(taHighScore);
         pHighScore.add(bBackHighScore);
         pHighScore.setLayout(new BoxLayout(pHighScore, BoxLayout.PAGE_AXIS));
 
+        //pQuizRound.add(taQuestionQuizRound);
+        //pQuizRound.add(taAnser1QuizRound);
         pQuizRound.add(lQuizRound);
-        pQuizRound.add(taQuizRound);
+        pQuizRound.add(lQuestionQuizRound);
+        //pQuizRound.add(tQuestionQuizRound);
+        pQuizRound.add(rbAnswer1);
+        pQuizRound.add(rbAnswer2);
+        pQuizRound.add(rbAnswer3);
+        pQuizRound.add(rbCorrectAnswer);
         pQuizRound.add(bPreviousQuizRound);
         pQuizRound.add(bNextQuizRound);
         pQuizRound.add(bBackQuizRound);
-        pQuizRound.setLayout(new BoxLayout(pQuizRound, BoxLayout.PAGE_AXIS));
-        //pQuizRound.setLayout(new GridLayout(4,2));
+        //pQuizRound.setLayout(new FlowLayout());
+        //pQuizRound.setLayout(new BoxLayout(pQuizRound, BoxLayout.PAGE_AXIS));
+        pQuizRound.setLayout(new GridLayout(0, 1, 5, 5));
+        //pQuizRound.setLayout(new GridLayout());
+        //pQuizRound.setLayout(new GroupLayout(pQuizRound));
+        //pQuizRound.setLayout(new BoxLayout(pQuizRound, BoxLayout.PAGE_AXIS));
+        /*GroupLayout layout = new GroupLayout(pQuizRound);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        layout.setHorizontalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(lQuizRound)
+                        .addComponent(lQuestionQuizRound)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(rbAnswer1)
+                                .addComponent(rbAnswer2))
+        );
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(lQuizRound)
+                                .addComponent(lQuestionQuizRound)
+                                .addComponent(rbAnswer1))
+                        .addComponent(rbAnswer2)
+        );
+        pQuizRound.setLayout(layout);*/
 
         pBasePanel.add(pMainMenu);//basePanel will 1st show the mainMenu
         getContentPane().add(pBasePanel);
@@ -199,23 +248,47 @@ public class NewPanelTry extends JFrame{
         pBasePanel.revalidate();
         pBasePanel.repaint();
     }
-    void showHighScorePanel(){
+    void showHighScorePanel() throws FileNotFoundException {
+        sortHighScore();
         pBasePanel.remove(pMainMenu);
         pBasePanel.add(pHighScore);
         pBasePanel.revalidate();
         pBasePanel.repaint();
     }
-    String showQuizRoundPanel() throws IOException {
-        String username = tUsernameStartQuiz.getText();
-        int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
+
+    void sortHighScore() throws FileNotFoundException {
+        List<String> highScoreList;
+        try (Stream<String> lines = Files.lines(Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt"))) {
+            highScoreList = lines.collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //System.out.print(highScoreList);
+        taHighScore.setText(highScoreList.toString());
+        /*File fHighScore = new File("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");//High Scores are shown directly (no need an extra function like others)
+        Scanner scanner = new Scanner(fHighScore);
+        //scanner.useDelimiter("\\Z");
+        String highscores="";
+        int i = 1;
+        while (scanner.hasNextLine()) {
+            String highscore = i + ". " + scanner.nextLine ();
+            i++;
+            highscores = highscores + highscore + "\n"  ;
+        }
+        //taHighScore.setText("High Scores: \n" + highscores);
+        taHighScore.setText(highscores);//may be improved like; getQuestions as list, and then sort according to highest scores*/
+    }
+    void showQuizRoundPanel() throws IOException {
+        //String username = tUsernameStartQuiz.getText();
+        //int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
         pBasePanel.removeAll();
-        getQuestions(numberOfQuestions);
+        //getQuestions(numberOfQuestions);
         //startQuiz();
         pBasePanel.add(pQuizRound);
         pBasePanel.revalidate();
         pBasePanel.repaint();
-        String usernameAndNumberOFQuestions = username + "," + numberOfQuestions;
-        return usernameAndNumberOFQuestions;
+        //String usernameAndNumberOFQuestions = username + "," + numberOfQuestions;
+        //return usernameAndNumberOFQuestions;
     }
 
     void unshowPanels(){
@@ -261,9 +334,22 @@ public class NewPanelTry extends JFrame{
         unshowPanels();
     }
 
-    List<String> getQuestions(int numberOfQuestions) throws IOException {
-
-        int reserveSizeOFQuestionsList = numberOfQuestions;
+    List<String> getQuestions(int numberOFQuestions) throws IOException {
+        List<String> questionList;
+        try (Stream<String> lines = Files.lines(Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt"))) {
+            questionList = lines.collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        List<String> reducedQuestionList = new ArrayList<>();
+        for (int i = 0; i < numberOFQuestions; i++) {
+            Random rand = new Random();
+            int randomIndex = rand.nextInt(questionList.size());
+            reducedQuestionList.add(questionList.get(randomIndex));
+            questionList.remove(randomIndex);
+        }
+        return reducedQuestionList;
+        /*int reserveSizeOFQuestionsList = numberOfQuestions;
         String currentLine;
         List <String> reserveQuestionsList= new ArrayList<>(reserveSizeOFQuestionsList);
         int reserveCounter=0;
@@ -285,18 +371,34 @@ public class NewPanelTry extends JFrame{
         }
         //showQuestions(numberOfQuestions, username, reserveQuestionsList);//list length is = numberOfQuestions,so 1 of them is enough
         //taQuizRound.setText(reserveQuestionsList.get(1));
-        return reserveQuestionsList;
-    }
+        return reserveQuestionsList;*/
+        }
 
-    void showQestions(int numberOFQuestions) throws IOException {
-        getQuestions(numberOFQuestions);
+        void showFirstQuestion () throws IOException {
+            int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
+            List<String> reserveQuestionsList = getQuestions(numberOfQuestions);
+            String question1 = reserveQuestionsList.get(0);
+            String[] tokens = question1.split(",");
+            lQuestionQuizRound.setText(tokens[0]);
+            rbAnswer1.setText(tokens[1]);
+            rbAnswer2.setText(tokens[2]);
+            rbAnswer3.setText(tokens[3]);
+            rbCorrectAnswer.setText(tokens[4]);
 
-    }
-    void showFirstQuestion(int numberOFQuestions) throws IOException {
-        List <String> reserveQuestionsList = getQuestions(numberOFQuestions);
-        String question1 = reserveQuestionsList.get(0);
-        taQuizRound.setText(question1);
-    }
+            System.out.println(reserveQuestionsList);
+            }
+            //String question1 = reserveQuestionsList.get(0);
+
+        /*String question2 = reserveQuestionsList.get(1);
+        String question3 = reserveQuestionsList.get(2);
+        String question4 = reserveQuestionsList.get(3);
+        String question5 = reserveQuestionsList.get(4);
+        String question6 = reserveQuestionsList.get(5);
+
+        taQuizRound.setText(question1 + "\n" + question2 + "\n" + question3 + "\n" + question4 + "\n" + question5 + "\n" + question6);*/
+            //taQuizRound.setText(reserveQuestionsList.toString());
+            //taQuizRound.setText(question2);
+
 
     /*{ //this will change removeAll() and add new components
         File fQuestions = new File("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
@@ -324,8 +426,7 @@ public class NewPanelTry extends JFrame{
      */
 
 
-
-    //scanner.useDelimiter("\\Z");
+        //scanner.useDelimiter("\\Z");
         /*String questions="";
         int i = 1;
         while (scanner.hasNextLine()) {
@@ -335,24 +436,26 @@ public class NewPanelTry extends JFrame{
         taQuizRound.setText(questions);
     }}*/
 
-    void showPreviousQuestion(){
-        //TODO go back to the previous question
-    }
+        void showPreviousQuestion () {
+            //TODO go back to the previous question
+        }
 
-    void showNextQuestion(){
-        //TODO go to the next question
-    }
+        void showNextQuestion () {
+            //TODO go to the next question
+        }
 
-    void showResult(){
-        //TODO result screen will show how many questions are correct answered among total number of questions
-    }
+        void showResult () {
+            //TODO result screen will show how many questions are correct answered among total number of questions
+        }
 
-    void saveResult(){
-        //TODO save the results obtained from the QuizRound with username on the result.txt file and dont forget highscores
-    }
-    void showHighScore(){
-        //TODO high score will show the leaderboard (username & percentages of old users)
-    }
+        void saveResult () {
+            //TODO save the results obtained from the QuizRound with username on the result.txt file and dont forget highscores
+            String username = tUsernameStartQuiz.getText();//this will be used in saveResult()
+            int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
+        }
+        void showHighScore () {
+            //TODO high score will show the leaderboard (username & percentages of old users)
+        }
 
 
 
