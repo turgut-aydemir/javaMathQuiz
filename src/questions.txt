@@ -1,17 +1,13 @@
-How old are you?, Answer1: 40, Answer2: 13, Answer3: 70, CorrectAnswer: 37
-Have you been in Wien?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: No
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-What is your name?, Answer1: Yes, Answer2: Okey, Answer3: Once, CorrectAnswer: Turgut
-How is you day going?, Answer1: good, Answer2: bad, Answer3: ok, CorrectAnswer: perfect
+How old are you?,40,13,70,37
+Have you been in Wien?,Yes,Okey,Once,No
+What is your name?,Yes,Okey,Once,Turgut
+How is your day going?good,bad,ok,perfect
+How many days are there in a week?,4,5,6,7
+How many letters are there in the English alphabet?,18,28,16,26
+How many hours are there in a day?,22,23,21,24
+How many minutes are there in an hour?,40,20,50,60
+How many seconds make one hour?,3000,4000,2500,3600
+How many sides are there in a triangle?,1,2,4,3
+Which continent is known as the ‘Dark’ continent?,America,Asia,Europe,Africa
+Where are you from?,Austria,Germany,England,France
+Rainbow consist of how many colours?,10,9,8,7

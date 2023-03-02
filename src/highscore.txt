@@ -1,5 +1,5 @@
-turgut, 90%
-cengiz, 80%
-emre, 60%
-selma, 70%
-aytekin, 100%
+turgut,90%
+cengiz,80%
+emre,60%
+selma,70%
+aytekin,100%

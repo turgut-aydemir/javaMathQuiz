@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,7 +7,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.*;
@@ -23,9 +21,9 @@ public class NewPanelTry extends JFrame{
     JLabel lNumberOfQuestionsStartQuiz, lUsernameStartQuiz, lQuestionAddQuestion, lAnswer1AddQuestion, lAnswer2AddQuestion, lAnswer3AddQuestion, lAnswerCorrectAddQuestion, lHighScore, lQuizRound, lQuestionQuizRound, lAnswer1QuizRound, lAnswer2QuizRound, lAnswer3QuizRound, lCorrectAnswerQuizRound;
     JTextArea taHighScore, taQuizRound, taQuestionQuizRound, taAnser1QuizRound;
     JRadioButton rbAnswer1, rbAnswer2, rbAnswer3, rbCorrectAnswer;
-    public NewPanelTry() throws IOException {
+    List<String> reserveQuestionsList;
 
-        int questionCounter = 1;
+    public NewPanelTry() throws IOException {
 
         pBasePanel = new JPanel();//Base panel (every other panel will be displayed on this panel)
         setTitle("Math Quiz");
@@ -58,6 +56,7 @@ public class NewPanelTry extends JFrame{
         bNextQuizRound = new JButton("->");
         bAgainQuizRound = new JButton("Again");//different than back, again goes to startQuiz panel
 
+
         //tQuestionQuizRound = new JTextField();
         lQuestionQuizRound = new JLabel();
         //tQuestionQuizRound.add(lQuestionQuizRound);
@@ -73,11 +72,11 @@ public class NewPanelTry extends JFrame{
         //rbAnswer1.add(lAnswer3QuizRound);
         rbCorrectAnswer = new JRadioButton();
         //rbAnswer1.add(lCorrectAnswerQuizRound);
-        //ButtonGroup rbGroup = new ButtonGroup();
-        //rbGroup.add(rbAnswer1);
-        //rbGroup.add(rbAnswer2);
-        //rbGroup.add(rbAnswer3);
-        //rbGroup.add(rbCorrectAnswer);
+        ButtonGroup rbGroup = new ButtonGroup();
+        rbGroup.add(rbAnswer1);
+        rbGroup.add(rbAnswer2);
+        rbGroup.add(rbAnswer3);
+        rbGroup.add(rbCorrectAnswer);
         //taQuestionQuizRound = new JTextArea();
         //taQuestionQuizRound.setEditable(false);
         //taAnser1QuizRound = new JTextArea();
@@ -108,7 +107,7 @@ public class NewPanelTry extends JFrame{
         lHighScore = new JLabel("High Scores");
         //taHighScore.add(lHighScore);
         //tQuizRound = new JTextField();
-        lQuizRound = new JLabel("Question" + questionCounter);
+        //lQuizRound = new JLabel("Question" + questionCounter);
 
         bAddQuestion.addActionListener(e -> showAddQuestionPanel());//action listeners for buttons
         bEditQuestions.addActionListener(e -> showEditQuestionsPanel());
@@ -127,6 +126,12 @@ public class NewPanelTry extends JFrame{
         bBackQuizRound.addActionListener(e -> unshowPanels());
         bAddAddQuestion.addActionListener(e -> saveQuestion());//save the entered question and relevant answers in the question pool
         bGoStartQuiz.addActionListener(e -> {
+            int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
+            try {
+                reserveQuestionsList = getQuestions(numberOfQuestions);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
             try {
                 showFirstQuestion();
             } catch (IOException ex) {
@@ -141,7 +146,7 @@ public class NewPanelTry extends JFrame{
             }
         });
         bPreviousQuizRound.addActionListener(e -> showPreviousQuestion());
-        bNextQuizRound.addActionListener(e -> showNextQuestion());
+        bNextQuizRound.addActionListener(e -> showNextQuestion(2));
         bAgainQuizRound.addActionListener(e -> saveResult());//if user doesn't click on that, results would not be saved!
 
         pMainMenu.add(bAddQuestion);
@@ -186,7 +191,7 @@ public class NewPanelTry extends JFrame{
 
         //pQuizRound.add(taQuestionQuizRound);
         //pQuizRound.add(taAnser1QuizRound);
-        pQuizRound.add(lQuizRound);
+        //pQuizRound.add(lQuizRound);
         pQuizRound.add(lQuestionQuizRound);
         //pQuizRound.add(tQuestionQuizRound);
         pQuizRound.add(rbAnswer1);
@@ -320,7 +325,7 @@ public class NewPanelTry extends JFrame{
         String answer3 = tAnswer3AddQuestion.getText();
         String correctAnswer = tAnswerCorrectAddQuestion.getText();
         //File fAddQuestion = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
-        String addQuestion = "Qestion: " + question + ", Answer1: " + answer1 + ", Answer2: " + answer2 + ", Answer3: " + answer3 + ", CorrectAnswer: " + correctAnswer + "\n";
+        String addQuestion = question + "," + answer1 + "," + answer2 + "," + answer3 + "," + correctAnswer + "\n";
         //fAddQuestion
         Path path = Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");
         byte[] arr = addQuestion.getBytes();
@@ -374,12 +379,23 @@ public class NewPanelTry extends JFrame{
         return reserveQuestionsList;*/
         }
 
-        void showFirstQuestion () throws IOException {
+        void showQuestions(int questionCounter) throws IOException {
             int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
             List<String> reserveQuestionsList = getQuestions(numberOfQuestions);
-            String question1 = reserveQuestionsList.get(0);
+            String question1 = reserveQuestionsList.get(questionCounter-1);
             String[] tokens = question1.split(",");
-            lQuestionQuizRound.setText(tokens[0]);
+            lQuestionQuizRound.setText("Question " + questionCounter+ ". " + tokens[0]);
+            rbAnswer1.setText(tokens[1]);
+            rbAnswer2.setText(tokens[2]);
+            rbAnswer3.setText(tokens[3]);
+            rbCorrectAnswer.setText(tokens[4]);
+        }
+
+        void showFirstQuestion () throws IOException {
+            int questionCounter = 1;
+            String question1 = reserveQuestionsList.get(questionCounter-1);
+            String[] tokens = question1.split(",");
+            lQuestionQuizRound.setText("Question " + questionCounter+ ". " + tokens[0]);
             rbAnswer1.setText(tokens[1]);
             rbAnswer2.setText(tokens[2]);
             rbAnswer3.setText(tokens[3]);
@@ -440,8 +456,17 @@ public class NewPanelTry extends JFrame{
             //TODO go back to the previous question
         }
 
-        void showNextQuestion () {
+        int showNextQuestion (int questionCounter) {
             //TODO go to the next question
+            String question1 = reserveQuestionsList.get(questionCounter-1);
+            String[] tokens = question1.split(",");
+            lQuestionQuizRound.setText("Question " + questionCounter+ ". " + tokens[0]);
+            rbAnswer1.setText(tokens[1]);
+            rbAnswer2.setText(tokens[2]);
+            rbAnswer3.setText(tokens[3]);
+            rbCorrectAnswer.setText(tokens[4]);
+            questionCounter++;
+            return questionCounter;
         }
 
         void showResult () {
