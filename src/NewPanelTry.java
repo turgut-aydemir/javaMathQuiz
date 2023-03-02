@@ -22,11 +22,13 @@ public class NewPanelTry extends JFrame{
     JTextArea taHighScore, taQuizRound, taQuestionQuizRound, taAnser1QuizRound;
     JRadioButton rbAnswer1, rbAnswer2, rbAnswer3, rbCorrectAnswer;
     List<String> reserveQuestionsList;
-
     int counter1;
+    String pathQuestions, pathHighScore;
 
     public NewPanelTry() throws IOException {
 
+        pathHighScore = "C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt";
+        pathQuestions = "C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
         pBasePanel = new JPanel();//Base panel (every other panel will be displayed on this panel)
         setTitle("Math Quiz");
         //pBasePanel.setBackground(Color.WHITE);
@@ -57,7 +59,7 @@ public class NewPanelTry extends JFrame{
         bPreviousQuizRound = new JButton("<-");
         bNextQuizRound = new JButton("->");
         bAgainQuizRound = new JButton("Again");//different than back, again goes to startQuiz panel
-
+        JTextField tfield2 = new JTextField();
 
         //tQuestionQuizRound = new JTextField();
         lQuestionQuizRound = new JLabel();
@@ -255,6 +257,7 @@ public class NewPanelTry extends JFrame{
         pBasePanel.add(pStartQuiz);
         pBasePanel.revalidate();
         pBasePanel.repaint();
+
     }
     void showHighScorePanel() throws FileNotFoundException {
         sortHighScore();
@@ -266,14 +269,14 @@ public class NewPanelTry extends JFrame{
 
     void sortHighScore() throws FileNotFoundException {
         List<String> highScoreList;
-        try (Stream<String> lines = Files.lines(Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt"))) {
+        try (Stream<String> lines = Files.lines(Paths.get(pathHighScore))) {
             highScoreList = lines.collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         //System.out.print(highScoreList);
         taHighScore.setText(highScoreList.toString());
-        /*File fHighScore = new File("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");//High Scores are shown directly (no need an extra function like others)
+        /*File fHighScore = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt");//High Scores are shown directly (no need an extra function like others)
         Scanner scanner = new Scanner(fHighScore);
         //scanner.useDelimiter("\\Z");
         String highscores="";
@@ -330,7 +333,7 @@ public class NewPanelTry extends JFrame{
         //File fAddQuestion = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
         String addQuestion = question + "," + answer1 + "," + answer2 + "," + answer3 + "," + correctAnswer + "\n";
         //fAddQuestion
-        Path path = Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");
+        Path path = Paths.get(pathQuestions);
         byte[] arr = addQuestion.getBytes();
         try {
             Files.write(path, arr, APPEND);
@@ -344,7 +347,7 @@ public class NewPanelTry extends JFrame{
 
     List<String> getQuestions(int numberOFQuestions) throws IOException {
         List<String> questionList;
-        try (Stream<String> lines = Files.lines(Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt"))) {
+        try (Stream<String> lines = Files.lines(Paths.get(pathQuestions))) {
             questionList = lines.collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -363,7 +366,7 @@ public class NewPanelTry extends JFrame{
         int reserveCounter=0;
         Random ra = new Random();
         int randomNumber;
-        Scanner sc = new Scanner(new File("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).useDelimiter("\n");
+        Scanner sc = new Scanner(new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).useDelimiter("\n");
         while (sc.hasNext())
         {
             currentLine = sc.next();
@@ -421,12 +424,12 @@ public class NewPanelTry extends JFrame{
 
 
     /*{ //this will change removeAll() and add new components
-        File fQuestions = new File("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
+        File fQuestions = new File("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt");//High Scores are handled here
         Scanner scanner = new Scanner(fQuestions);
 
         Random n = new Random(10);
         int Max=5,  Min=1, ii=0;
-        String fileName="C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
+        String fileName="C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
         Path path = Paths.get(fileName);
         long lines = 0;
         try {
@@ -438,9 +441,9 @@ public class NewPanelTry extends JFrame{
         int i = (int) (Math.random() * ((Max - Min) + 1));
         int nn=3;
 
-        String questions = Files.readAllLines(Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(nn);
+        String questions = Files.readAllLines(Paths.get("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(nn);
 
-        String question = Files.readAllLines(Paths.get("C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(i);
+        String question = Files.readAllLines(Paths.get("C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt")).get(i);
         taQuizRound.setText(question);}
 
      */
