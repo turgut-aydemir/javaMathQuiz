@@ -20,4 +20,3 @@ Have you been in Brasil?,Yes,Okey,Once,No
 Have you been in Mexico?,Yes,Okey,Once,No
 Have you been in Russia?,Yes,Okey,Once,No
 Have you been in China?,Yes,Okey,Once,No
-

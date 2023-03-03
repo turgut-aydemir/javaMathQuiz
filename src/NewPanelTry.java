@@ -22,8 +22,9 @@ public class NewPanelTry extends JFrame{
     JRadioButton rbAnswer1, rbAnswer2, rbAnswer3, rbCorrectAnswer;
     List<String> reserveQuestionsList;
     ButtonGroup rbGroup;
-    int questionCounter = 1, correctAnswerCounter = 0;
-    String pathQuestions, pathHighScore, checkSelectedAnswer, selectedAnswer, correctAnswer;
+    int questionCounter = 1, correctAnswerCounter = 0, numberOfQuestions;
+    String pathQuestions, pathHighScore, checkSelectedAnswer, selectedAnswer, correctAnswer, username, result;
+    double percentage;
 
     public NewPanelTry() throws IOException {
 
@@ -52,11 +53,11 @@ public class NewPanelTry extends JFrame{
         bBackEditQuestions = new JButton("Back");
         bBackStartQuiz = new JButton("Back");
         bBackHighScore = new JButton("Back");
-        bBackQuizRound = new JButton("Back");
+        bBackQuizRound = new JButton("Back to Main Menu");
         bAddAddQuestion = new JButton("Add");//saves the question into the questions.txt file as a new line
         bSaveEditQuestions = new JButton("Save");
         bGoStartQuiz = new JButton("Go");//number of questions & username is obtained here, don't forget to use them after quiz round for highscore and results
-        bNextQuizRound = new JButton("->");
+        bNextQuizRound = new JButton("Next Question ->");
         bAgainQuizRound = new JButton("Again");//different than back, again goes to startQuiz panel
 
         lQuestionQuizRound = new JLabel();
@@ -111,7 +112,8 @@ public class NewPanelTry extends JFrame{
         bBackQuizRound.addActionListener(e -> unshowPanels());
         bAddAddQuestion.addActionListener(e -> saveQuestion());//save the entered question and relevant answers in the question pool
         bGoStartQuiz.addActionListener(e -> {
-            int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
+            username = tUsernameStartQuiz.getText();
+            numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
             try {
                 reserveQuestionsList = getQuestions(numberOfQuestions);
             } catch (IOException ex) {
@@ -140,7 +142,7 @@ public class NewPanelTry extends JFrame{
                 throw new RuntimeException(ex);
             }
         });//we take it and use it again, BUT at the last question we should stop using it. IF clauses
-        bAgainQuizRound.addActionListener(e -> saveResult());//if user doesn't click on that, results would not be saved!
+        bAgainQuizRound.addActionListener(e -> saveResults());//if user doesn't click on that, results would not be saved!
 
         pMainMenu.add(bAddQuestion);
         pMainMenu.add(bEditQuestions);
@@ -291,10 +293,10 @@ public class NewPanelTry extends JFrame{
         }
     int showQuestions(int questionCounterIn) throws IOException {
         if(questionCounter<=reserveQuestionsList.size()){
-            removeCheckSelectedAnswerAddRAdioButtons();
+            removeCheckSelectedAnswerAddRadioButtons();
             String question1 = reserveQuestionsList.get(questionCounter-1);
             String[] tokens = question1.split(",");
-            lQuestionQuizRound.setText("Question " + questionCounter+ ". " + tokens[0]);
+            lQuestionQuizRound.setText("Question " + questionCounter+ "/" + numberOfQuestions + ". " + tokens[0]);
             List<Integer> listAnswer =Arrays.asList(1, 2, 3, 4);
             Collections.shuffle(listAnswer);
             rbAnswer1.setText(tokens[listAnswer.get(0)]);
@@ -312,15 +314,8 @@ public class NewPanelTry extends JFrame{
         }
         return questionCounter;
     }
-        void showResult () {
-            //TODO result screen will show how many questions are correct answered among total number of questions
-        }
-        void saveResult () {
-            //TODO save the results obtained from the QuizRound with username on the result.txt file and dont forget highscores
-            String username = tUsernameStartQuiz.getText();//this will be used in saveResult()
-            int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
-        }
         void checkSelectedAnswer () {
+            removeRadioButtonsAddCheckSelectedAnswer();
             selectedAnswer = rbGroup.getSelection().getActionCommand();
             System.out.println(selectedAnswer);
             for (String element : reserveQuestionsList){
@@ -332,32 +327,44 @@ public class NewPanelTry extends JFrame{
             }
             if (Objects.equals(selectedAnswer, correctAnswer)){
                 correctAnswerCounter++;
-                checkSelectedAnswer = "Correct " + selectedAnswer;
+                checkSelectedAnswer = "Correct. " + selectedAnswer;
             }
             else {
                 checkSelectedAnswer = "Wrong. Correct answer: " + correctAnswer;
             }
 
-            /*if(rbCorrectAnswer.isSelected()){
-                checkSelectedAnswer = rbCorrectAnswer.getActionCommand();
-                tCheckSelectedAnswer.setText("Correct" + checkSelectedAnswer);
-            } else if (rbAnswer1.isSelected()) {
-
-            }
-
-            checkSelectedAnswer = rbGroup.getSelection().getActionCommand();*/
             tCheckSelectedAnswer.setText(checkSelectedAnswer);
-            removeRadioButtonsAddCheckSelectedAnswer();
+            System.out.println(questionCounter);
+            System.out.println(numberOfQuestions);
+            if(numberOfQuestions + 1 == questionCounter){
+                pQuizRound.remove(bNextQuizRound);
+                bBackQuizRound.setText("Play Again");
+                lQuestionQuizRound.setText("Results");
+                saveResults();
+                showResults();
+            }
         }
 
-        void removeRadioButtonsAddCheckSelectedAnswer(){
+    void showResults() {
+        percentage = (double)correctAnswerCounter * 100 / (numberOfQuestions);
+        result = username + ": " + percentage + " %";
+        tCheckSelectedAnswer.setText(result);
+        System.out.println(result);
+    }
+
+    void saveResults() {
+        //percentage = (double)numCorrect * 100 / (numCorrect + numFalse);
+    }
+
+
+    void removeRadioButtonsAddCheckSelectedAnswer(){
             rbAnswer1.setVisible(false);
             rbAnswer2.setVisible(false);
             rbAnswer3.setVisible(false);
             rbCorrectAnswer.setVisible(false);
             tCheckSelectedAnswer.setVisible(true);
         }
-        void removeCheckSelectedAnswerAddRAdioButtons(){
+        void removeCheckSelectedAnswerAddRadioButtons(){
             tCheckSelectedAnswer.setVisible(false);
             rbAnswer1.setVisible(true);
             rbAnswer2.setVisible(true);
