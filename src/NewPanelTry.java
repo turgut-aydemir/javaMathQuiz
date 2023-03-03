@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.*;
@@ -16,14 +15,15 @@ import static java.nio.file.StandardOpenOption.APPEND;
 public class NewPanelTry extends JFrame{
 
     JPanel pBasePanel, pMainMenu, pAddQuestion, pEditQuestions, pStartQuiz, pHighScore, pQuizRound;
-    JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBackAddQuestion, bBackEditQuestions, bBackStartQuiz, bBackHighScore, bBackQuizRound, bAddAddQuestion, bSaveEditQuestions, bPreviousQuizRound, bNextQuizRound, bGoStartQuiz, bAgainQuizRound;
-    JTextField tNumberOfQuestionsStartQuiz, tUsernameStartQuiz, tQuestionAddQuestion, tAnswer1AddQuestion, tAnswer2AddQuestion, tAnswer3AddQuestion, tAnswerCorrectAddQuestion, tHighScore, tQuizRound, tQuestionQuizRound;
+    JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBackAddQuestion, bBackEditQuestions, bBackStartQuiz, bBackHighScore, bBackQuizRound, bAddAddQuestion, bSaveEditQuestions, bNextQuizRound, bGoStartQuiz, bAgainQuizRound;
+    JTextField tNumberOfQuestionsStartQuiz, tUsernameStartQuiz, tQuestionAddQuestion, tAnswer1AddQuestion, tAnswer2AddQuestion, tAnswer3AddQuestion, tAnswerCorrectAddQuestion, tHighScore, tQuizRound, tQuestionQuizRound, tCheckSelectedAnswer;
     JLabel lNumberOfQuestionsStartQuiz, lUsernameStartQuiz, lQuestionAddQuestion, lAnswer1AddQuestion, lAnswer2AddQuestion, lAnswer3AddQuestion, lAnswerCorrectAddQuestion, lHighScore, lQuizRound, lQuestionQuizRound, lAnswer1QuizRound, lAnswer2QuizRound, lAnswer3QuizRound, lCorrectAnswerQuizRound;
-    JTextArea taHighScore, taQuizRound, taQuestionQuizRound, taAnser1QuizRound;
+    JTextArea taHighScore, taQuizRound, taQuestionQuizRound, taAnser1QuizRound, taCheckSelectedAnswer;
     JRadioButton rbAnswer1, rbAnswer2, rbAnswer3, rbCorrectAnswer;
     List<String> reserveQuestionsList;
-    int questionCounter = 1;
-    String pathQuestions, pathHighScore;
+    ButtonGroup rbGroup;
+    int questionCounter = 1, correctAnswerCounter = 0;
+    String pathQuestions, pathHighScore, checkSelectedAnswer, selectedAnswer, correctAnswer;
 
     public NewPanelTry() throws IOException {
 
@@ -56,7 +56,6 @@ public class NewPanelTry extends JFrame{
         bAddAddQuestion = new JButton("Add");//saves the question into the questions.txt file as a new line
         bSaveEditQuestions = new JButton("Save");
         bGoStartQuiz = new JButton("Go");//number of questions & username is obtained here, don't forget to use them after quiz round for highscore and results
-        bPreviousQuizRound = new JButton("<-");
         bNextQuizRound = new JButton("->");
         bAgainQuizRound = new JButton("Again");//different than back, again goes to startQuiz panel
 
@@ -65,11 +64,15 @@ public class NewPanelTry extends JFrame{
         rbAnswer2 = new JRadioButton();
         rbAnswer3 = new JRadioButton();
         rbCorrectAnswer = new JRadioButton();
-        ButtonGroup rbGroup = new ButtonGroup();
+        rbGroup = new ButtonGroup();
         rbGroup.add(rbAnswer1);
         rbGroup.add(rbAnswer2);
         rbGroup.add(rbAnswer3);
         rbGroup.add(rbCorrectAnswer);
+        rbAnswer1.addActionListener(e -> checkSelectedAnswer());
+        rbAnswer2.addActionListener(e -> checkSelectedAnswer());
+        rbAnswer3.addActionListener(e -> checkSelectedAnswer());
+        rbCorrectAnswer.addActionListener(e -> checkSelectedAnswer());
 
         tNumberOfQuestionsStartQuiz = new JTextField(1);//text fields and related labels
         lNumberOfQuestionsStartQuiz = new JLabel("how many questions do you want?");
@@ -87,6 +90,9 @@ public class NewPanelTry extends JFrame{
         lAnswerCorrectAddQuestion = new JLabel("add the correct answer");
         taHighScore = new JTextArea();
         lHighScore = new JLabel("High Scores");
+        tCheckSelectedAnswer = new JTextField();
+        tCheckSelectedAnswer.setEditable(false);
+        taCheckSelectedAnswer = new JTextArea();
 
         bAddQuestion.addActionListener(e -> showAddQuestionPanel());//action listeners for buttons
         bEditQuestions.addActionListener(e -> showEditQuestionsPanel());
@@ -126,9 +132,9 @@ public class NewPanelTry extends JFrame{
                 throw new RuntimeException(ex);
             }
         });
-        bPreviousQuizRound.addActionListener(e -> showPreviousQuestion());
         bNextQuizRound.addActionListener(e -> {
             try {
+                rbGroup.clearSelection();
                 showQuestions(questionCounter);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -174,11 +180,11 @@ public class NewPanelTry extends JFrame{
         pHighScore.setLayout(new BoxLayout(pHighScore, BoxLayout.PAGE_AXIS));
 
         pQuizRound.add(lQuestionQuizRound);
+        pQuizRound.add(tCheckSelectedAnswer);
         pQuizRound.add(rbAnswer1);
         pQuizRound.add(rbAnswer2);
         pQuizRound.add(rbAnswer3);
         pQuizRound.add(rbCorrectAnswer);
-        pQuizRound.add(bPreviousQuizRound);
         pQuizRound.add(bNextQuizRound);
         pQuizRound.add(bBackQuizRound);
         pQuizRound.setLayout(new GridLayout(0, 1, 5, 5));
@@ -246,6 +252,9 @@ public class NewPanelTry extends JFrame{
         tUsernameStartQuiz.setText("");
         tNumberOfQuestionsStartQuiz.setText("");
     }
+    void clearRadioButtonChecks(){
+        rbGroup.clearSelection();
+    }
     void saveQuestion(){
         //TODO save the entered question in the Question Pool
         String question = tQuestionAddQuestion.getText();
@@ -280,49 +289,29 @@ public class NewPanelTry extends JFrame{
         }
         return reducedQuestionList;
         }
-        int showQuestions(int questionCounterIn) throws IOException {
-            if(questionCounter<=reserveQuestionsList.size()){
-                String question1 = reserveQuestionsList.get(questionCounter-1);
-                String[] tokens = question1.split(",");
-                lQuestionQuizRound.setText("Question " + questionCounter+ ". " + tokens[0]);
-                rbAnswer1.setText(tokens[1]);
-                rbAnswer2.setText(tokens[2]);
-                rbAnswer3.setText(tokens[3]);
-                rbCorrectAnswer.setText(tokens[4]);
-                questionCounter++;
-            }
-            else {
-
-            }
-            return questionCounter;
-        }
-        int showFirstQuestion (int questionCounter) throws IOException {
-            //int questionCounter = 1;
+    int showQuestions(int questionCounterIn) throws IOException {
+        if(questionCounter<=reserveQuestionsList.size()){
+            removeCheckSelectedAnswerAddRAdioButtons();
             String question1 = reserveQuestionsList.get(questionCounter-1);
             String[] tokens = question1.split(",");
             lQuestionQuizRound.setText("Question " + questionCounter+ ". " + tokens[0]);
-            rbAnswer1.setText(tokens[1]);
-            rbAnswer2.setText(tokens[2]);
-            rbAnswer3.setText(tokens[3]);
-            rbCorrectAnswer.setText(tokens[4]);
+            List<Integer> listAnswer =Arrays.asList(1, 2, 3, 4);
+            Collections.shuffle(listAnswer);
+            rbAnswer1.setText(tokens[listAnswer.get(0)]);
+            rbAnswer1.setActionCommand(tokens[listAnswer.get(0)]);
+            rbAnswer2.setText(tokens[listAnswer.get(1)]);
+            rbAnswer2.setActionCommand(tokens[listAnswer.get(1)]);
+            rbAnswer3.setText(tokens[listAnswer.get(2)]);
+            rbAnswer3.setActionCommand(tokens[listAnswer.get(2)]);
+            rbCorrectAnswer.setText(tokens[listAnswer.get(3)]);
+            rbCorrectAnswer.setActionCommand(tokens[listAnswer.get(3)]);
             questionCounter++;
-            return questionCounter;
-            }
-        void showPreviousQuestion () {
-            //TODO go back to the previous question
         }
-        int showNextQuestion (int counterQuestionQuizRound) {
-            //TODO go to the next question
-            String question1 = reserveQuestionsList.get(counterQuestionQuizRound-1);
-            String[] tokens = question1.split(",");
-            lQuestionQuizRound.setText("Question " + counterQuestionQuizRound+ ". " + tokens[0]);
-            rbAnswer1.setText(tokens[1]);
-            rbAnswer2.setText(tokens[2]);
-            rbAnswer3.setText(tokens[3]);
-            rbCorrectAnswer.setText(tokens[4]);
-            counterQuestionQuizRound++;
-            return counterQuestionQuizRound;
+        else {
+
         }
+        return questionCounter;
+    }
         void showResult () {
             //TODO result screen will show how many questions are correct answered among total number of questions
         }
@@ -331,8 +320,49 @@ public class NewPanelTry extends JFrame{
             String username = tUsernameStartQuiz.getText();//this will be used in saveResult()
             int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
         }
-        void showHighScore () {
-            //TODO high score will show the leaderboard (username & percentages of old users)
+        void checkSelectedAnswer () {
+            selectedAnswer = rbGroup.getSelection().getActionCommand();
+            System.out.println(selectedAnswer);
+            for (String element : reserveQuestionsList){
+                if (element.contains(reserveQuestionsList.get(questionCounter-2))) {
+                    String question2 = element;
+                    String[] tokens = question2.split(",");
+                    correctAnswer =  tokens[4];
+                }
+            }
+            if (Objects.equals(selectedAnswer, correctAnswer)){
+                correctAnswerCounter++;
+                checkSelectedAnswer = "Correct " + selectedAnswer;
+            }
+            else {
+                checkSelectedAnswer = "Wrong. Correct answer: " + correctAnswer;
+            }
+
+            /*if(rbCorrectAnswer.isSelected()){
+                checkSelectedAnswer = rbCorrectAnswer.getActionCommand();
+                tCheckSelectedAnswer.setText("Correct" + checkSelectedAnswer);
+            } else if (rbAnswer1.isSelected()) {
+
+            }
+
+            checkSelectedAnswer = rbGroup.getSelection().getActionCommand();*/
+            tCheckSelectedAnswer.setText(checkSelectedAnswer);
+            removeRadioButtonsAddCheckSelectedAnswer();
+        }
+
+        void removeRadioButtonsAddCheckSelectedAnswer(){
+            rbAnswer1.setVisible(false);
+            rbAnswer2.setVisible(false);
+            rbAnswer3.setVisible(false);
+            rbCorrectAnswer.setVisible(false);
+            tCheckSelectedAnswer.setVisible(true);
+        }
+        void removeCheckSelectedAnswerAddRAdioButtons(){
+            tCheckSelectedAnswer.setVisible(false);
+            rbAnswer1.setVisible(true);
+            rbAnswer2.setVisible(true);
+            rbAnswer3.setVisible(true);
+            rbCorrectAnswer.setVisible(true);
         }
 
 public static void main(String args[]){
