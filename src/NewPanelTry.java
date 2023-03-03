@@ -22,13 +22,13 @@ public class NewPanelTry extends JFrame{
     JTextArea taHighScore, taQuizRound, taQuestionQuizRound, taAnser1QuizRound;
     JRadioButton rbAnswer1, rbAnswer2, rbAnswer3, rbCorrectAnswer;
     List<String> reserveQuestionsList;
-    int counterQuestionQuizRound;
+    int questionCounter = 1;
     String pathQuestions, pathHighScore;
 
     public NewPanelTry() throws IOException {
 
-        pathHighScore = "C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt";
-        pathQuestions = "C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
+        pathHighScore = "C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt";
+        pathQuestions = "C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
 
         pBasePanel = new JPanel();//Base panel (every other panel will be displayed on this panel)
         setTitle("Math Quiz");
@@ -112,7 +112,8 @@ public class NewPanelTry extends JFrame{
                 throw new RuntimeException(ex);
             }
             try {
-                counterQuestionQuizRound = showFirstQuestion();
+                //int counterQuestionQuizRound = 1;
+                showQuestions(questionCounter);
 
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -126,7 +127,13 @@ public class NewPanelTry extends JFrame{
             }
         });
         bPreviousQuizRound.addActionListener(e -> showPreviousQuestion());
-        bNextQuizRound.addActionListener(e -> counterQuestionQuizRound = showNextQuestion(counterQuestionQuizRound));//we take it and use it again, BUT at the last question we should stop using it. IF clauses
+        bNextQuizRound.addActionListener(e -> {
+            try {
+                showQuestions(questionCounter);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });//we take it and use it again, BUT at the last question we should stop using it. IF clauses
         bAgainQuizRound.addActionListener(e -> saveResult());//if user doesn't click on that, results would not be saved!
 
         pMainMenu.add(bAddQuestion);
@@ -273,19 +280,24 @@ public class NewPanelTry extends JFrame{
         }
         return reducedQuestionList;
         }
-        void showQuestions(int questionCounter) throws IOException {
-            int numberOfQuestions = Integer.parseInt(tNumberOfQuestionsStartQuiz.getText());
-            List<String> reserveQuestionsList = getQuestions(numberOfQuestions);
-            String question1 = reserveQuestionsList.get(questionCounter-1);
-            String[] tokens = question1.split(",");
-            lQuestionQuizRound.setText("Question " + questionCounter+ ". " + tokens[0]);
-            rbAnswer1.setText(tokens[1]);
-            rbAnswer2.setText(tokens[2]);
-            rbAnswer3.setText(tokens[3]);
-            rbCorrectAnswer.setText(tokens[4]);
+        int showQuestions(int questionCounterIn) throws IOException {
+            if(questionCounter<=reserveQuestionsList.size()){
+                String question1 = reserveQuestionsList.get(questionCounter-1);
+                String[] tokens = question1.split(",");
+                lQuestionQuizRound.setText("Question " + questionCounter+ ". " + tokens[0]);
+                rbAnswer1.setText(tokens[1]);
+                rbAnswer2.setText(tokens[2]);
+                rbAnswer3.setText(tokens[3]);
+                rbCorrectAnswer.setText(tokens[4]);
+                questionCounter++;
+            }
+            else {
+
+            }
+            return questionCounter;
         }
-        int showFirstQuestion () throws IOException {
-            int questionCounter = 1;
+        int showFirstQuestion (int questionCounter) throws IOException {
+            //int questionCounter = 1;
             String question1 = reserveQuestionsList.get(questionCounter-1);
             String[] tokens = question1.split(",");
             lQuestionQuizRound.setText("Question " + questionCounter+ ". " + tokens[0]);
