@@ -28,8 +28,8 @@ public class NewPanelTry extends JFrame{
 
     public NewPanelTry() throws IOException {
 
-        pathHighScore = "C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt";
-        pathQuestions = "C:\\Users\\aydemirt\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
+        pathHighScore = "C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\highscore.txt";
+        pathQuestions = "C:\\Users\\turgu\\IdeaProjects\\javaMathQuiz\\src\\questions.txt";
 
         pBasePanel = new JPanel();//Base panel (every other panel will be displayed on this panel)
         setTitle("Math Quiz");
@@ -109,7 +109,9 @@ public class NewPanelTry extends JFrame{
         bBackEditQuestions.addActionListener(e -> unshowPanels());
         bBackStartQuiz.addActionListener(e -> unshowPanels());
         bBackHighScore.addActionListener(e -> unshowPanels());
-        bBackQuizRound.addActionListener(e -> unshowPanels());
+        bBackQuizRound.addActionListener(e -> {
+            rbGroup.clearSelection();
+            unshowPanels();});
         bAddAddQuestion.addActionListener(e -> saveQuestion());//save the entered question and relevant answers in the question pool
         bGoStartQuiz.addActionListener(e -> {
             username = tUsernameStartQuiz.getText();
@@ -237,6 +239,10 @@ public class NewPanelTry extends JFrame{
     }
     void unshowPanels(){
         pBasePanel.removeAll();
+        bNextQuizRound.setVisible(true); //because in checkSelectedAnswer it is set invisible after last quetion is answered
+        bBackQuizRound.setText("Back to Main Menu");
+        questionCounter = 1;
+        correctAnswerCounter = 0;
         pBasePanel.add(pMainMenu);
         clearAddQuestionTextFields();
         clearStartQuizTextFields();
@@ -337,7 +343,7 @@ public class NewPanelTry extends JFrame{
             System.out.println(questionCounter);
             System.out.println(numberOfQuestions);
             if(numberOfQuestions + 1 == questionCounter){
-                pQuizRound.remove(bNextQuizRound);
+                bNextQuizRound.setVisible(false);
                 bBackQuizRound.setText("Play Again");
                 lQuestionQuizRound.setText("Results");
                 saveResults();
@@ -347,13 +353,22 @@ public class NewPanelTry extends JFrame{
 
     void showResults() {
         percentage = (double)correctAnswerCounter * 100 / (numberOfQuestions);
-        result = username + ": " + percentage + " %";
+        result = username + ": " + correctAnswerCounter + " correct in total of " + numberOfQuestions + " (" + percentage + "%)";
         tCheckSelectedAnswer.setText(result);
+        String saveResult = username + ","+ percentage + "%\n";
+        Path path = Paths.get(pathHighScore);
+        byte[] arr = saveResult.getBytes();
+        try {
+            Files.write(path, arr, APPEND);
+        }
+        catch (IOException ex) {
+            System.out.print("Invalid Path");
+        }
         System.out.println(result);
     }
 
     void saveResults() {
-        //percentage = (double)numCorrect * 100 / (numCorrect + numFalse);
+
     }
 
 
