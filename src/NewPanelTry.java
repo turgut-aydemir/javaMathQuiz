@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,9 +18,9 @@ public class NewPanelTry extends JFrame{
 
     JPanel pBasePanel, pMainMenu, pAddQuestion, pEditQuestions, pStartQuiz, pHighScore, pQuizRound;
     JButton bAddQuestion, bEditQuestions, bStartQuiz, bHighScore, bBackAddQuestion, bBackEditQuestions, bBackStartQuiz, bBackHighScore, bBackQuizRound, bAddAddQuestion, bSaveEditQuestions, bNextQuizRound, bGoStartQuiz, bAgainQuizRound;
-    JTextField tNumberOfQuestionsStartQuiz, tUsernameStartQuiz, tQuestionAddQuestion, tAnswer1AddQuestion, tAnswer2AddQuestion, tAnswer3AddQuestion, tAnswerCorrectAddQuestion, tHighScore, tQuizRound, tQuestionQuizRound, tCheckSelectedAnswer;
-    JLabel lNumberOfQuestionsStartQuiz, lUsernameStartQuiz, lQuestionAddQuestion, lAnswer1AddQuestion, lAnswer2AddQuestion, lAnswer3AddQuestion, lAnswerCorrectAddQuestion, lHighScore, lQuizRound, lQuestionQuizRound, lAnswer1QuizRound, lAnswer2QuizRound, lAnswer3QuizRound, lCorrectAnswerQuizRound;
-    JTextArea taHighScore, taQuizRound, taQuestionQuizRound, taAnser1QuizRound, taCheckSelectedAnswer;
+    JTextField tNumberOfQuestionsStartQuiz, tUsernameStartQuiz, tQuestionAddQuestion, tAnswer1AddQuestion, tAnswer2AddQuestion, tAnswer3AddQuestion, tAnswerCorrectAddQuestion, tCheckSelectedAnswer;
+    JLabel lNumberOfQuestionsStartQuiz, lUsernameStartQuiz, lQuestionAddQuestion, lAnswer1AddQuestion, lAnswer2AddQuestion, lAnswer3AddQuestion, lAnswerCorrectAddQuestion, lHighScore, lQuestionQuizRound;
+    JTextArea taHighScore, taCheckSelectedAnswer;
     JRadioButton rbAnswer1, rbAnswer2, rbAnswer3, rbCorrectAnswer;
     List<String> reserveQuestionsList;
     ButtonGroup rbGroup;
@@ -43,7 +45,7 @@ public class NewPanelTry extends JFrame{
         pStartQuiz = new JPanel();
         pHighScore = new JPanel();
         pQuizRound = new JPanel();
-        pMainMenu = new JPanel();//Main menu will show the 4 main buttons (layout can be grid)
+        pMainMenu = new JPanel();//Main menu will show the 4 main buttons (layout grid)
 
         bAddQuestion = new JButton("Add Question");//buttons
         bEditQuestions = new JButton("Edit Questions");
@@ -56,9 +58,9 @@ public class NewPanelTry extends JFrame{
         bBackQuizRound = new JButton("Back to Main Menu");
         bAddAddQuestion = new JButton("Add");//saves the question into the questions.txt file as a new line
         bSaveEditQuestions = new JButton("Save");
-        bGoStartQuiz = new JButton("Go");//number of questions & username is obtained here, don't forget to use them after quiz round for highscore and results
+        bGoStartQuiz = new JButton("Go");//number of questions & username is obtained here, used for highscore and results.
         bNextQuizRound = new JButton("Next Question ->");
-        bAgainQuizRound = new JButton("Again");//different than back, again goes to startQuiz panel
+        bAgainQuizRound = new JButton("Again");
 
         lQuestionQuizRound = new JLabel();
         rbAnswer1 = new JRadioButton();
@@ -103,6 +105,8 @@ public class NewPanelTry extends JFrame{
                 showHighScorePanel();
             } catch (FileNotFoundException ex) {
                 throw new RuntimeException(ex);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         });
         bBackAddQuestion.addActionListener(e -> unshowPanels());//if user clicks back on any panel, he/she should land on the main menu
@@ -122,7 +126,6 @@ public class NewPanelTry extends JFrame{
                 throw new RuntimeException(ex);
             }
             try {
-                //int counterQuestionQuizRound = 1;
                 showQuestions(questionCounter);
 
             } catch (IOException ex) {
@@ -143,8 +146,8 @@ public class NewPanelTry extends JFrame{
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-        });//we take it and use it again, BUT at the last question we should stop using it. IF clauses
-        bAgainQuizRound.addActionListener(e -> saveResults());//if user doesn't click on that, results would not be saved!
+        });
+        bAgainQuizRound.addActionListener(e -> saveResults());
 
         pMainMenu.add(bAddQuestion);
         pMainMenu.add(bEditQuestions);
@@ -215,21 +218,21 @@ public class NewPanelTry extends JFrame{
         pBasePanel.revalidate();
         pBasePanel.repaint();
     }
-    void showHighScorePanel() throws FileNotFoundException {
+    void showHighScorePanel() throws IOException {
         sortHighScore();
         pBasePanel.remove(pMainMenu);
         pBasePanel.add(pHighScore);
         pBasePanel.revalidate();
         pBasePanel.repaint();
     }
-    void sortHighScore() throws FileNotFoundException {
-        List<String> highScoreList;
-        try (Stream<String> lines = Files.lines(Paths.get(pathHighScore))) {
-            highScoreList = lines.collect(Collectors.toList());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        taHighScore.setText(highScoreList.toString());
+    void sortHighScore() throws IOException {
+        File fHighScore = new File(pathHighScore);
+        FileInputStream fis = new FileInputStream(fHighScore);
+        byte[] data = new byte[(int) fHighScore.length()];
+        fis.read(data);
+        fis.close();
+        String str = new String(data, "UTF-8");
+        taHighScore.setText(str);
         }
     void showQuizRoundPanel() throws IOException {
         pBasePanel.removeAll();
@@ -260,11 +263,7 @@ public class NewPanelTry extends JFrame{
         tUsernameStartQuiz.setText("");
         tNumberOfQuestionsStartQuiz.setText("");
     }
-    void clearRadioButtonChecks(){
-        rbGroup.clearSelection();
-    }
     void saveQuestion(){
-        //TODO save the entered question in the Question Pool
         String question = tQuestionAddQuestion.getText();
         String answer1 = tAnswer1AddQuestion.getText();
         String answer2 = tAnswer2AddQuestion.getText();
@@ -314,9 +313,6 @@ public class NewPanelTry extends JFrame{
             rbCorrectAnswer.setText(tokens[listAnswer.get(3)]);
             rbCorrectAnswer.setActionCommand(tokens[listAnswer.get(3)]);
             questionCounter++;
-        }
-        else {
-
         }
         return questionCounter;
     }
@@ -370,7 +366,6 @@ public class NewPanelTry extends JFrame{
     void saveResults() {
 
     }
-
 
     void removeRadioButtonsAddCheckSelectedAnswer(){
             rbAnswer1.setVisible(false);

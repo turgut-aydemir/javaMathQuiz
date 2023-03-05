@@ -20,3 +20,4 @@ Have you been in Brasil?,Yes,Okey,Once,No
 Have you been in Mexico?,Yes,Okey,Once,No
 Have you been in Russia?,Yes,Okey,Once,No
 Have you been in China?,Yes,Okey,Once,No
+In which year are we in?,2022,2002,1995,2023
